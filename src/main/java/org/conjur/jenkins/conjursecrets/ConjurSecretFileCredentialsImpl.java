@@ -3,10 +3,16 @@ package org.conjur.jenkins.conjursecrets;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.impl.BaseStandardCredentials;
 import hudson.Extension;
+import hudson.model.Item;
+import hudson.model.ItemGroup;
 import hudson.model.ModelObject;
+import hudson.util.FormValidation;
 import hudson.util.Secret;
 import org.conjur.jenkins.api.ConjurAPI;
+import org.conjur.jenkins.api.ConjurAPIUtils;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.springframework.lang.NonNull;
 
 import java.io.ByteArrayInputStream;
@@ -101,6 +107,17 @@ public class ConjurSecretFileCredentialsImpl extends BaseStandardCredentials imp
         @Override
         public String getDisplayName() {
             return "Conjur Secret File";
+        }
+
+        public FormValidation doTestConnection(
+                @AncestorInPath ItemGroup<Item> context,
+                @QueryParameter("variableId") String variableId) {
+
+            if (variableId == null || variableId.isEmpty()) {
+                return FormValidation.error("FAILED variableId field is required");
+            }
+            ConjurSecretFileCredentialsImpl credential = new ConjurSecretFileCredentialsImpl(CredentialsScope.GLOBAL, "test", "desc", variableId);
+            return ConjurAPIUtils.validateCredential(context, credential);
         }
     }
 }
