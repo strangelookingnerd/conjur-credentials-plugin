@@ -24,7 +24,7 @@
     </div>
     <div id="jwtValidateButton" style="display: none;">
         <f:validateButton
-            title="${%JWT Token Claims}" progress="${%resolving...}"
+            title="${%JWT Claims}" progress="${%resolving...}"
             method="obtainJwtToken" />
     </div>
     

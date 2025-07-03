@@ -56,7 +56,7 @@
         </div>
     </f:section>
     <div id="conjurLocalTokenClaims">
-    <f:validateButton title="${%JWT Token Claims}" progress="${%resolving...}"
+    <f:validateButton title="${%JWT Claims}" progress="${%resolving...}"
    method="obtainJwtToken" />
     </div>
 </div>
