@@ -8,7 +8,7 @@
          xmlns:f="/lib/form"
          xmlns:c="/lib/credentials">
 
-  <f:section title="${%CyberARK Secrets Manager Conjur Configuration}">
+  <f:section title="${%CyberArk Secrets Manager Conjur Configuration}">
    <div id="divListAuthenticator">
         <f:entry title="${%Select Conjur Authentication Type}" name="selectAuthenticatorEntry" field="selectAuthenticatorEntryField">
             <select id="listAuthenticator" name="selectAuthenticator" class="jenkins-select_input">
@@ -21,10 +21,6 @@
         <f:property field="conjurConfiguration" header="${%Conjur Configuration}"/>
      </div>
    </f:section>
-
-  
-  
-
 
     <div id="conjurGlobalJWTSection">
     <f:section title="${%Conjur JWT Authentication}">
@@ -40,7 +36,7 @@
             <f:number field="keyLifetimeInMinutes" name="keyLifetimeInMinutes" onkeypress='validateNumber(event)'/>
         </f:entry>
         <f:entry title="${%JWT Token Duration In Seconds}">
-            <f:number field="tokenDurarionInSeconds" name="tokenDurarionInSeconds" onkeypress='validateNumber(event)'/>
+            <f:number field="tokenDurationInSeconds" name="tokenDurationInSeconds" onkeypress='validateNumber(event)'/>
         </f:entry>
         <f:entry title="${%Enable Identity Format Fields From Token}" description="DEPRECATED: If checked, populate variables available from the current context">
             <f:checkbox id="enableIdentityFormatFieldsFromToken" name="enableIdentityFormatFieldsFromToken" field="enableIdentityFormatFieldsFromToken" default="false"/>
@@ -60,7 +56,7 @@
         </div>
     </f:section>
     <div id="conjurLocalTokenClaims">
-    <f:validateButton title="${%JWT Token Claims}" progress="${%resolving...}"
+    <f:validateButton title="${%JWT Claims}" progress="${%resolving...}"
    method="obtainJwtToken" />
     </div>
 </div>

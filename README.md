@@ -507,4 +507,4 @@ In the new plugin, the host `id` and annotations should be updated like so:
 | Credentials not found	| Ensure credentials are correctly configured and accessible in the job / folder / global scope |
 | Authentication errors | Verify Conjur host and authentication identity used in the plugin |
 
-In case you are using JWTAuthentication, please check JWT Token Claims
+In case you are using JWTAuthentication, please check JWT Claims
