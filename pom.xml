@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
@@ -139,6 +139,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>3.11.2</version> <!-- or newer version -->
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.24.1-GA</version>
@@ -169,6 +175,10 @@
             <artifactId>workflow-job</artifactId>
         </dependency>
 		<dependency>
+			<groupId>org.jenkins-ci.plugins.workflow</groupId>
+			<artifactId>workflow-job</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.jenkins-ci.plugins</groupId>
 			<artifactId>docker-commons</artifactId>
 			<version>445.v6b_646c962a_94</version>
@@ -189,13 +199,21 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version><!--$NO-MVN-MAN-VER$-->
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version><!--$NO-MVN-MAN-VER$-->
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
-					<argLine>
-						--add-opens=java.base/java.lang=ALL-UNNAMED
-						--add-opens java.base/java.util=ALL-UNNAMED
-						--add-opens=java.base/sun.reflect.generics.parser=ALL-UNNAMED
-					</argLine>
+
+					<argLine>${jacoco.agent.argLine} --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/sun.reflect.generics.parser=ALL-UNNAMED</argLine>
 					<systemPropertyVariables>
 						<org.slf4j.simpleLogger.defaultLogLevel>DEBUG</org.slf4j.simpleLogger.defaultLogLevel>
 						<org.slf4j.simpleLogger.showDateTime>true</org.slf4j.simpleLogger.showDateTime>
@@ -225,9 +243,53 @@
 						</configuration>
 					</execution>
 				</executions>
+
+			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.5</version>
+				<executions>
+					<!-- Attach the agent -->
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
+							<propertyName>jacoco.agent.argLine</propertyName>
+						</configuration>
+					</execution>
+					<!-- Generate the report -->
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<!-- select non-aggregate reports -->
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 	<profiles>
 		<profile>
 			<id>jdk-9-and-above</id>

@@ -122,19 +122,6 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 
 		LOGGER.log(Level.FINEST, String.format("getCredentialsFromSupplier type: %s context: %s", type.toString(), context.getDisplayName() ) );
 
-		// this type is used to get APIKey so we cannot process it as other Credentials
-
-//		if(type == UsernamePasswordCredentials.class && authentication.getPrincipal().equals("CONJUR_JENKINS_PLUGIN") )
-//		{
-//			CredentialsMatcher matcher =
-//					CredentialsMatchers.instanceOf(type);
-//			List<C> globalCreds = DomainCredentials.getCredentials(
-//					SystemCredentialsProvider.getInstance().getDomainCredentialsMap(), type, domainRequirements, matcher);
-//
-//			creds.addAll(globalCreds);
-//			return creds;
-//		}
-
 		ItemGroup<?> locg = null;
 
 		// check authentication
