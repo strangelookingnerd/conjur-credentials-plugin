@@ -79,15 +79,12 @@ public class ConjurSecretCredentialImplTest {
     }
 
     @Test
-    public void testUsernameVariable() throws NoSuchFieldException, SecurityException, IllegalAccessException {
+    public void testUsernameVariable() throws SecurityException {
         final ConjurSecretCredentialsImpl conjurSecretCredentials = new ConjurSecretCredentialsImpl(
                 CredentialsScope.GLOBAL, "testPipeline", "DevTeam-1", "Test pipeline");
         conjurSecretCredentials.setContext(j.jenkins.getInstance());
-        final Field field = conjurSecretCredentials.getClass().getDeclaredField("context");
-        field.setAccessible(true);
-        Object contextValue = field.get(conjurSecretCredentials);
 
-        assertEquals(j.jenkins.getInstance(), contextValue);
+        assertEquals(j.jenkins.getInstance(), conjurSecretCredentials.getContext());
     }
 
     @Nested
@@ -118,13 +115,11 @@ public class ConjurSecretCredentialImplTest {
     }
 
     @Test
-    public void testVariablePath() throws NoSuchFieldException, SecurityException {
+    public void testVariablePath() throws SecurityException {
         final ConjurSecretCredentialsImpl conjurSecretCredentials = new ConjurSecretCredentialsImpl(
                 CredentialsScope.GLOBAL, "testPipeline", "DevTeam-1", "Test pipeline");
         String expectedPath = "DevTeam-1";
         conjurSecretCredentials.setVariableId(expectedPath);
-        final Field field = conjurSecretCredentials.getClass().getDeclaredField("variableId");
-        field.setAccessible(true);
 
         assertEquals("DevTeam-1", conjurSecretCredentials.getVariableId());
     }

@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -61,13 +60,11 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
     }
 
     @Test
-    public void testUsernameVariable() throws NoSuchFieldException, SecurityException {
+    public void testUsernameVariable() throws SecurityException {
         final ConjurSecretUsernameSSHKeyCredentialsBinding userNameCredentials = new ConjurSecretUsernameSSHKeyCredentialsBinding(
                 "Test pipeline");
         String usernameVariable = "userName";
         userNameCredentials.setUsernameVariable(usernameVariable);
-        final Field field = userNameCredentials.getClass().getDeclaredField("usernameVariable");
-        field.setAccessible(true);
         try {
             assertNotNull(userNameCredentials.getUsernameVariable());
         } catch (IllegalArgumentException e) {
@@ -76,13 +73,11 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
     }
 
     @Test
-    public void testPasswordVariable() throws NoSuchFieldException, SecurityException {
+    public void testPasswordVariable() throws SecurityException {
         final ConjurSecretUsernameSSHKeyCredentialsBinding secretCredentials = new ConjurSecretUsernameSSHKeyCredentialsBinding(
                 "Test pipeline");
         String pwdVariable = "passwordVariable";
         secretCredentials.setSecretVariable(pwdVariable);
-        final Field field = secretCredentials.getClass().getDeclaredField("secretVariable");
-        field.setAccessible(true);
         try {
             assertNotNull(secretCredentials.getSecretVariable());
         } catch (IllegalArgumentException e) {

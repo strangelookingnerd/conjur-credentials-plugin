@@ -99,8 +99,7 @@ public class ConjurSecretFileCredentialsBindingTest {
         FilePath mockPath = mock(FilePath.class);
         when(mockPath.getRemote()).thenReturn("/test/job");
         Class<?> cleanupActionClass = Class.forName("org.conjur.jenkins.conjursecrets.ConjurSecretFileCredentialsBinding$CleanupAction");
-        Constructor<?> constructor = cleanupActionClass.getDeclaredConstructor(
-                hudson.FilePath.class);
+        Constructor<?> constructor = cleanupActionClass.getDeclaredConstructor(FilePath.class);
         constructor.setAccessible(true);
         Object cleanupAction = constructor.newInstance(mockPath);
         Method getPathMethod = cleanupActionClass.getDeclaredMethod("getPath");

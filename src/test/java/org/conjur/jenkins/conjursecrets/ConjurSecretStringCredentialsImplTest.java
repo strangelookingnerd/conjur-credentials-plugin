@@ -1,7 +1,6 @@
 package org.conjur.jenkins.conjursecrets;
 
 import ch.qos.logback.core.Context;
-import com.cloudbees.plugins.credentials.CredentialsDescriptor;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
@@ -40,10 +39,8 @@ public class ConjurSecretStringCredentialsImplTest {
     @Mock
     private ConjurAPI mockConjurAPI;
 
-    private CredentialsDescriptor descriptor = null;
-    private ConjurSecretCredentialsImpl credentialImpl;
     private ModelObject context;
-    private ConjurConfiguration config = null;
+
 
     @Before
     public void setUp() {
@@ -70,17 +67,12 @@ public class ConjurSecretStringCredentialsImplTest {
     }
 
     @Test
-    public void testUsernameVariable() throws NoSuchFieldException, SecurityException, IllegalAccessException {
+    public void testUsernameVariable() throws SecurityException {
         final ConjurSecretStringCredentialsImpl conjurSecretCredentials = new ConjurSecretStringCredentialsImpl(
                 CredentialsScope.GLOBAL, "testPipeline", "DevTeam-1", "Test pipeline");
         conjurSecretCredentials.setContext(context);
-        final Field field = conjurSecretCredentials.getClass().getDeclaredField("context");
-        field.setAccessible(true);
-        try {
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+
+        assertEquals(context, conjurSecretCredentials.getContext());
     }
 
     @Test
@@ -93,13 +85,11 @@ public class ConjurSecretStringCredentialsImplTest {
     }
 
     @Test
-    public void testVariablePath() throws NoSuchFieldException, SecurityException {
+    public void testVariablePath() throws SecurityException {
         final ConjurSecretStringCredentialsImpl conjurSecretStringCredentials = new ConjurSecretStringCredentialsImpl(
                 CredentialsScope.GLOBAL, "testPipeline", "DevTeam-1", "Test pipeline");
         String expectedPath = "DevTeam-1";
         conjurSecretStringCredentials.setVariableId(expectedPath);
-        final Field field = conjurSecretStringCredentials.getClass().getDeclaredField("variableId");
-        field.setAccessible(true);
 
         assertEquals("DevTeam-1", conjurSecretStringCredentials.getVariableId());
     }

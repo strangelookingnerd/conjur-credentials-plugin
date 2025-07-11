@@ -50,14 +50,12 @@ public class ConjurSecretUsernameSSHKeyCredentialsImplTest {
     private String id = "test-id";
     private String username = "test-username";
     private String credentialID = "test-credential-id";
-    private Secret passphrase;
     private String description = "test-description";
 
     @SuppressWarnings("deprecation")
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        passphrase = Secret.fromString("test-passphrase");
     }
 
     @Test

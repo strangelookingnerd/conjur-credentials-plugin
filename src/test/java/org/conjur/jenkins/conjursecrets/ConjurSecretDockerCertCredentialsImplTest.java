@@ -45,7 +45,6 @@ public class ConjurSecretDockerCertCredentialsImplTest {
         Secret mockSecret = mock(Secret.class);
         ConjurSecretDockerCertCredentialsImpl conjurSecretDockerCertCredentials = spy(new ConjurSecretDockerCertCredentialsImpl(
                 CredentialsScope.GLOBAL, "DevTeam-1", "test Pipeline", "key-id", "cert-id", "ca-certid"));
-        ConjurSecretDockerCertCredentials mockcred = mock(ConjurSecretDockerCertCredentials.class);
         doReturn(mockSecret).when(conjurSecretDockerCertCredentials).getClientKeySecret();
         Secret result = conjurSecretDockerCertCredentials.getSecret();
 

@@ -56,13 +56,11 @@ public class ConjurSecretUsernameCredentialsBindingTest {
     }
 
     @Test
-    public void testUsernameVariable() throws NoSuchFieldException, SecurityException {
+    public void testUsernameVariable() throws SecurityException {
         final ConjurSecretUsernameCredentialsBinding userNameCredentials = new ConjurSecretUsernameCredentialsBinding(
                 "Test pipeline");
         String usernameVariable = "userName";
         userNameCredentials.setUsernameVariable(usernameVariable);
-        final Field field = userNameCredentials.getClass().getDeclaredField("usernameVariable");
-        field.setAccessible(true);
         try {
             assertEquals("userName", userNameCredentials.getUsernameVariable(), "userName");
         } catch (IllegalArgumentException e) {
@@ -72,13 +70,11 @@ public class ConjurSecretUsernameCredentialsBindingTest {
     }
 
     @Test
-    public void testPasswordVariable() throws NoSuchFieldException, SecurityException {
+    public void testPasswordVariable() throws SecurityException {
         final ConjurSecretUsernameCredentialsBinding userNameCredentials = new ConjurSecretUsernameCredentialsBinding(
                 "Test pipeline");
         String pwdVariable = "passwordVariable";
         userNameCredentials.setPasswordVariable(pwdVariable);
-        final Field field = userNameCredentials.getClass().getDeclaredField("passwordVariable");
-        field.setAccessible(true);
         try {
             assertEquals("passwordVariable", userNameCredentials.getPasswordVariable());
         } catch (IllegalArgumentException e) {

@@ -468,7 +468,7 @@ public class ConjurCredentialStoreTest {
 
 
     @Test
-    public void testConjurCredentialStoreAction() throws Exception, SecurityException {
+    public void testConjurCredentialStoreAction() throws Exception {
         ConjurCredentialStore mockStore = mock(ConjurCredentialStore.class);
         ModelObject mockContext = mock(ModelObject.class);
         Constructor<ConjurCredentialStoreAction> constructor = ConjurCredentialStoreAction.class.getDeclaredConstructor(ConjurCredentialStore.class, ModelObject.class);

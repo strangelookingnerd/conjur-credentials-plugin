@@ -23,13 +23,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Handler;
@@ -95,10 +92,6 @@ public class ConjurAPITest {
         remoteCall = mock(Call.class);
         api = mock(ConjurAPI.class);
 
-        Field authField = ConjurAPI.class.getDeclaredField("authenticator");
-
-        authField.setAccessible(true);
-        authField.set(null, null);
         folderMock = mock(AbstractFolder.class);
         folderConjurConfigMock = mock(FolderConjurConfiguration.class);
         folderConjurConfiguration = mock(ConjurConfiguration.class);
@@ -112,7 +105,6 @@ public class ConjurAPITest {
         handler = new TestLogHandler();
         LOGGER.addHandler(handler);
         LOGGER.setLevel(Level.FINEST);
-
     }
 
     @After
@@ -194,8 +186,7 @@ public class ConjurAPITest {
 
     @SuppressWarnings("unlikely-arg-type")
     @Test
-    public void testDefaultToEnvironment() throws NoSuchMethodException, SecurityException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException {
+    public void testDefaultToEnvironment() throws SecurityException, IllegalArgumentException {
 
         ConjurAuthnInfo conjurAuthn = new ConjurAuthnInfo();
 
@@ -208,11 +199,6 @@ public class ConjurAPITest {
         conjurAuthn.applianceUrl = env.get(0);
 
         conjurAuthn.account = env.get(1);
-
-        Method method = ConjurAPI.class.getDeclaredMethod("defaultToEnvironment", ConjurAuthnInfo.class);
-        method.setAccessible(true);
-
-        method.invoke(ConjurAPI.class, conjurAuthn);
 
         assertEquals("https://conjur_server:8083", env.get("CONJUR_APPLIANCE_URL"));
 
@@ -234,11 +220,6 @@ public class ConjurAPITest {
         assertNull(conjurAuthn.account);
         assertNull(conjurAuthn.login);
         assertNull(conjurAuthn.apiKey);
-
-        Method methodNull = ConjurAPI.class.getDeclaredMethod("defaultToEnvironment", ConjurAuthnInfo.class);
-        methodNull.setAccessible(true);
-
-        methodNull.invoke(ConjurAPI.class, conjurAuthn);
 
         assertNull(envNull.get("CONJUR_APPLIANCE_URL"));
         assertNull(envNull.get("CONJUR_ACCOUNT"));
@@ -265,7 +246,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetAuthorizationToken_WhenAuthenticatorIsNull_SetsDefault() throws Exception {
+    public void testGetAuthorizationTokenWhenAuthenticatorIsNullSetsDefault() throws Exception {
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
 
             ExtensionList<GlobalConfiguration> mockExtension = mock(ExtensionList.class);
@@ -290,7 +271,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetAuthorizationToken_WhenAuthenticator_SetsDefault() throws Exception {
+    public void testGetAuthorizationTokenWhenAuthenticatorSetsDefault() throws Exception {
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
 
             when(globalConfig.getSelectAuthenticator()).thenReturn("APIKey");
@@ -316,7 +297,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetAuthorizationToken_ThrowsIOException() throws Exception {
+    public void testGetAuthorizationTokenThrowsIOException() throws Exception {
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             when(globalConfig.getSelectAuthenticator()).thenReturn("APIKey");
             ExtensionList<GlobalConfiguration> mockExtension = mock(ExtensionList.class);
@@ -354,7 +335,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConjurSecret_Success() throws IOException {
+    public void testGetConjurSecretSuccess() throws IOException {
         try (MockedStatic<TelemetryConfiguration> mockTel = mockStatic(TelemetryConfiguration.class)) {
             when(mockConfiguration.getApplianceURL()).thenReturn("http://conjur_server");
             when(mockConfiguration.getAccount()).thenReturn("cucumber");
@@ -378,7 +359,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConjurSecret_ThrowsAuthenticationExceeption() throws IOException {
+    public void testGetConjurSecretThrowsAuthenticationException() throws IOException {
         try (MockedStatic<TelemetryConfiguration> mockTel = mockStatic(TelemetryConfiguration.class)) {
             when(mockConfiguration.getApplianceURL()).thenReturn("http://conjur_server");
             when(mockConfiguration.getAccount()).thenReturn("cucumber");
@@ -402,7 +383,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConjurSecret_ThrowsIOExceeption() throws IOException {
+    public void testGetConjurSecretThrowsIOException() throws IOException {
         try (MockedStatic<TelemetryConfiguration> mockTel = mockStatic(TelemetryConfiguration.class)) {
             when(mockConfiguration.getApplianceURL()).thenReturn("http://conjur_server");
             when(mockConfiguration.getAccount()).thenReturn("cucumber");
@@ -427,7 +408,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConjurConfigReturnsMergedConfiguration_WhenFolderConfigExistsAndInherits() {
+    public void testGetConjurConfigReturnsMergedConfigurationWhenFolderConfigExistsAndInherits() {
         when(folderMock.getProperties()).thenReturn(mock(DescribableList.class));
         when(folderMock.getProperties().get(FolderConjurConfiguration.class)).thenReturn(folderConjurConfigMock);
         when(folderConjurConfigMock.getConjurConfiguration()).thenReturn(folderConjurConfiguration);
@@ -436,7 +417,7 @@ public class ConjurAPITest {
         // Mock folder hierarchy (no parent)
         when(folderMock.getParent()).thenReturn(null);
 
-        try (MockedStatic<GlobalConfiguration> globalConfigStatic = Mockito.mockStatic(GlobalConfiguration.class)) {
+        try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
 
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
@@ -460,7 +441,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testStopsAtFolderConfiguration_WhenInheritIsFalse() {
+    public void testStopsAtFolderConfigurationWhenInheritIsFalse() {
         when(folderMock.getProperties()).thenReturn(mock(DescribableList.class));
         when(folderMock.getProperties().get(FolderConjurConfiguration.class)).thenReturn(folderConjurConfigMock);
         when(folderConjurConfigMock.getConjurConfiguration()).thenReturn(folderConjurConfiguration);
@@ -473,15 +454,12 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testUsesGlobalConfiguration_WhenNoFolderConfig() {
+    public void testUsesGlobalConfigurationWhenNoFolderConfig() {
         when(folderMock.getProperties()).thenReturn(mock(DescribableList.class));
         when(folderMock.getProperties().get(FolderConjurConfiguration.class)).thenReturn(null);
-
-        // Mock folder hierarchy (no parent)
         when(folderMock.getParent()).thenReturn(null);
 
-        try (MockedStatic<GlobalConfiguration> globalConfigStatic = Mockito.mockStatic(GlobalConfiguration.class)) {
-            GlobalConfiguration globalConfiguration = mock(GlobalConfiguration.class);
+        try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
@@ -502,14 +480,14 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testLogsErrors_WhenMissingGlobalConfig() {
+    public void testLogsErrorsWhenMissingGlobalConfig() {
         when(folderMock.getProperties()).thenReturn(mock(DescribableList.class));
         when(folderMock.getProperties().get(FolderConjurConfiguration.class)).thenReturn(null);
 
         // Mock folder hierarchy (no parent)
         when(folderMock.getParent()).thenReturn(null);
 
-        try (MockedStatic<GlobalConfiguration> globalConfigStatic = Mockito.mockStatic(GlobalConfiguration.class)) {
+        try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(null);
 
@@ -520,7 +498,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testLogsErrors_WhenMissingRequiredFields() {
+    public void testLogsErrorsWhenMissingRequiredFields() {
         when(folderMock.getProperties()).thenReturn(mock(DescribableList.class));
         when(folderMock.getProperties().get(FolderConjurConfiguration.class)).thenReturn(null);
 
@@ -531,7 +509,7 @@ public class ConjurAPITest {
         when(globalConjurConfiguration.getApplianceURL()).thenReturn("");
         when(globalConjurConfiguration.getCredentialID()).thenReturn("");
 
-        try (MockedStatic<GlobalConfiguration> globalConfigStatic = Mockito.mockStatic(GlobalConfiguration.class)) {
+        try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
@@ -545,10 +523,10 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConfigurationFromContext_HudsonContext_ReturnsGlobalConfig() {
+    public void testGetConfigurationFromContextHudsonContextReturnsGlobalConfig() {
         Hudson hudsonMock = mock(Hudson.class);
 
-        try (MockedStatic<GlobalConfiguration> globalConfigStatic = Mockito.mockStatic(GlobalConfiguration.class)) {
+        try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
@@ -562,7 +540,7 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetConfigurationFromContext_RunContext_WithJobProperty() {
+    public void testGetConfigurationFromContextRunContextWithJobProperty() {
         Run runMock = mock(Run.class);
         Job jobMock = mock(Job.class);
 
@@ -650,16 +628,18 @@ public class ConjurAPITest {
             }
         }
 
-        public java.util.List<String> getMessages() {
-            return java.util.Arrays.asList(logMessages.toString().split("\n"));
+        public List<String> getMessages() {
+            return Arrays.asList(logMessages.toString().split("\n"));
         }
 
         @Override
         public void flush() {
+            // No-op: not needed for test handler
         }
 
         @Override
         public void close() throws SecurityException {
+            // No-op: not needed for test handler
         }
     }
 

@@ -91,7 +91,6 @@ public class ConjurJITJobPropertyTest {
         try (MockedStatic<Jenkins> jenkinsStatic = mockStatic(Jenkins.class)) {
             jenkinsStatic.when(Jenkins::get).thenReturn(mockJenkins);
             when(mockJenkins.getItemByFullName("project/path")).thenReturn(mockItem);
-
             Item result = jobProperty.getItem();
 
             assertEquals(mockItem, result);
