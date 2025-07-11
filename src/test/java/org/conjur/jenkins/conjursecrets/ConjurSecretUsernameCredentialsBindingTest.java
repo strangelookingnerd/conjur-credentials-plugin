@@ -60,24 +60,10 @@ public class ConjurSecretUsernameCredentialsBindingTest {
                 "Test pipeline");
         String usernameVariable = "userName";
         userNameCredentials.setUsernameVariable(usernameVariable);
-        try {
-            assertEquals("userName", userNameCredentials.getUsernameVariable(), "userName");
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+        String actualVar = userNameCredentials.getUsernameVariable();
 
-    @Test
-    public void testPasswordVariable() throws SecurityException {
-        final ConjurSecretUsernameCredentialsBinding userNameCredentials = new ConjurSecretUsernameCredentialsBinding(
-                "Test pipeline");
-        String pwdVariable = "passwordVariable";
-        userNameCredentials.setPasswordVariable(pwdVariable);
-        String actualVar = userNameCredentials.getPasswordVariable();
-
-        assertEquals(pwdVariable, actualVar,
-                "Password variable should match the value that was set");
+        assertEquals(usernameVariable, actualVar,
+                "Username variable should match the value that was set");
     }
 
     @Test

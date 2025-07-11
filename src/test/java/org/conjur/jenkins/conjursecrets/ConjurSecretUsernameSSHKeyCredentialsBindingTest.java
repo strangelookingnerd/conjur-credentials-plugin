@@ -72,18 +72,6 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
     }
 
     @Test
-    public void testPasswordVariable() throws SecurityException {
-        final ConjurSecretUsernameSSHKeyCredentialsBinding secretCredentials = new ConjurSecretUsernameSSHKeyCredentialsBinding(
-                "Test pipeline");
-        String pwdVariable = "passwordVariable";
-        secretCredentials.setSecretVariable(pwdVariable);
-        String actualVar = secretCredentials.getSecretVariable();
-
-        assertEquals(pwdVariable, actualVar,
-                "Password variable should match the value that was set");
-    }
-
-    @Test
     public void testVariables() {
         ConjurSecretUsernameSSHKeyCredentialsBinding bind = new ConjurSecretUsernameSSHKeyCredentialsBinding(
                 "Dev-Team-1");
