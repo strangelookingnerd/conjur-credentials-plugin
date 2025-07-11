@@ -419,7 +419,7 @@ public class ConjurAPITest {
 
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
 
-            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
+            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
 
@@ -460,7 +460,7 @@ public class ConjurAPITest {
         when(folderMock.getParent()).thenReturn(null);
 
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
-            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
+            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
 
@@ -488,7 +488,7 @@ public class ConjurAPITest {
         when(folderMock.getParent()).thenReturn(null);
 
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
-            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
+            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(null);
 
             ConjurConfiguration result = ConjurAPI.getConjurConfig(folderMock);
@@ -510,7 +510,7 @@ public class ConjurAPITest {
         when(globalConjurConfiguration.getCredentialID()).thenReturn("");
 
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
-            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
+            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
             when(globalConjurConfigMock.getSelectAuthenticator()).thenReturn("APIKey");
@@ -527,7 +527,7 @@ public class ConjurAPITest {
         Hudson hudsonMock = mock(Hudson.class);
 
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
-            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(hudson.ExtensionList.class));
+            globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
 

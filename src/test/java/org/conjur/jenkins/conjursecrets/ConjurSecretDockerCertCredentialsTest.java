@@ -115,22 +115,24 @@ public class ConjurSecretDockerCertCredentialsTest {
     @Test
     public void testGetClientKeySecret() {
         DummyConjurSecretDockerCertCredentials creds = new DummyConjurSecretDockerCertCredentials();
-        Secret secret = Secret.fromString("some-key");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("some-key");
         try (MockedStatic<ConjurAPI> apiMock = mockStatic(ConjurAPI.class)) {
             apiMock.when(() -> ConjurAPI.getSecretFromConjurWithInheritance(any(), eq(creds), eq("key-id")))
-                    .thenReturn(secret);
+                    .thenReturn(mockSecret);
 
-            assertEquals(secret, creds.getClientKeySecret());
+            assertEquals(mockSecret, creds.getClientKeySecret());
         }
     }
 
     @Test
     public void testGetClientCertificateReturnsPlainText() {
         DummyConjurSecretDockerCertCredentials creds = new DummyConjurSecretDockerCertCredentials();
-        Secret secret = Secret.fromString("cert-plain-text");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("cert-plain-text");
         try (MockedStatic<ConjurAPI> apiMock = mockStatic(ConjurAPI.class)) {
             apiMock.when(() -> ConjurAPI.getSecretFromConjurWithInheritance(any(), eq(creds), eq("cert-id")))
-                    .thenReturn(secret);
+                    .thenReturn(mockSecret);
 
             assertEquals("cert-plain-text", creds.getClientCertificate());
         }
@@ -150,10 +152,11 @@ public class ConjurSecretDockerCertCredentialsTest {
     @Test
     public void testGetServerCaCertificateReturnsPlainText() {
         DummyConjurSecretDockerCertCredentials creds = new DummyConjurSecretDockerCertCredentials();
-        Secret secret = Secret.fromString("ca-cert-plain-text");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("ca-cert-plain-text");
         try (MockedStatic<ConjurAPI> apiMock = mockStatic(ConjurAPI.class)) {
             apiMock.when(() -> ConjurAPI.getSecretFromConjurWithInheritance(any(), eq(creds), eq("ca-id")))
-                    .thenReturn(secret);
+                    .thenReturn(mockSecret);
 
             assertEquals("ca-cert-plain-text", creds.getServerCaCertificate());
         }

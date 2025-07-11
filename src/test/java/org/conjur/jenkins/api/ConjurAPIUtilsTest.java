@@ -197,12 +197,10 @@ public class ConjurAPIUtilsTest {
     }
 
     @Test
-    public void testExtractJobPathFromUrl() throws Exception {
+    public void testExtractJobPathFromUrl() {
         String urlPath = "/job/folder1/job/myJob/";
-        Method method = ConjurAPIUtils.class.getDeclaredMethod("extractJobPathFromUrl", String.class);
-        method.setAccessible(true);
+        String result = ConjurAPIUtils.extractJobPathFromUrl(urlPath);
 
-        String result = (String) method.invoke(null, urlPath);
         assertEquals("folder1/myJob", result);
     }
 
@@ -225,9 +223,10 @@ public class ConjurAPIUtilsTest {
 
     @Test
     public void testValidateCredentialWithSecret() {
-        Secret secret = Secret.fromString("dummy-secret");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("mocked-secret");
         when(secretCredentials.getContext()).thenReturn(context);
-        when(secretCredentials.getSecret()).thenReturn(secret);
+        when(secretCredentials.getSecret()).thenReturn(mockSecret);
 
         FormValidation result = ConjurAPIUtils.validateCredential(context, secretCredentials);
 
@@ -252,10 +251,11 @@ public class ConjurAPIUtilsTest {
 
     @Test
     public void testValidateCredentialWithInvalidConjurExceptionReturnsSecretFromParent() throws Exception {
-        Secret secret = Secret.fromString("dummy-secret");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("mocked-secret");
         when(secretCredentials.getSecret())
                 .thenThrow(new InvalidConjurSecretException("Secret Error"))
-                .thenReturn(secret);
+                .thenReturn(mockSecret);
 
         String referUrl = "/job/folder1/job/myJob/";
         mockStaticStaplerWithReferer(referUrl);

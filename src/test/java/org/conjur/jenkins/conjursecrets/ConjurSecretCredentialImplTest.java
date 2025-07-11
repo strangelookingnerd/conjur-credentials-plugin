@@ -23,8 +23,6 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.lang.reflect.Field;
-
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -243,7 +241,8 @@ public class ConjurSecretCredentialImplTest {
     @Test
     public void testSelfContainedReturnsClonedSecret() {
         ConjurSecretCredentialsImpl base = mock(ConjurSecretCredentialsImpl.class);
-        Secret mockSecret = Secret.fromString("mocked-secret");
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("mocked-secret");
         when(base.getScope()).thenReturn(null);
         when(base.getId()).thenReturn("cred-id");
         when(base.getVariableId()).thenReturn("var-id");

@@ -65,11 +65,10 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
                 "Test pipeline");
         String usernameVariable = "userName";
         userNameCredentials.setUsernameVariable(usernameVariable);
-        try {
-            assertNotNull(userNameCredentials.getUsernameVariable());
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        String actualVar = userNameCredentials.getUsernameVariable();
+
+        assertEquals(usernameVariable, actualVar,
+                "Username variable should match the value that was set");
     }
 
     @Test
@@ -78,11 +77,10 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
                 "Test pipeline");
         String pwdVariable = "passwordVariable";
         secretCredentials.setSecretVariable(pwdVariable);
-        try {
-            assertNotNull(secretCredentials.getSecretVariable());
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+        String actualVar = secretCredentials.getSecretVariable();
+
+        assertEquals(pwdVariable, actualVar,
+                "Password variable should match the value that was set");
     }
 
     @Test

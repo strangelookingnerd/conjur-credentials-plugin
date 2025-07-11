@@ -16,7 +16,6 @@ import org.jvnet.hudson.test.JenkinsRule;
 import org.mockito.Mock;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,12 +74,10 @@ public class ConjurSecretUsernameCredentialsBindingTest {
                 "Test pipeline");
         String pwdVariable = "passwordVariable";
         userNameCredentials.setPasswordVariable(pwdVariable);
-        try {
-            assertEquals("passwordVariable", userNameCredentials.getPasswordVariable());
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String actualVar = userNameCredentials.getPasswordVariable();
+
+        assertEquals(pwdVariable, actualVar,
+                "Password variable should match the value that was set");
     }
 
     @Test

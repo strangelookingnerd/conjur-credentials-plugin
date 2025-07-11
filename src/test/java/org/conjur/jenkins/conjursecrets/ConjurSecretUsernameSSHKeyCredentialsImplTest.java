@@ -168,8 +168,10 @@ public class ConjurSecretUsernameSSHKeyCredentialsImplTest {
         Jenkins jenkinsMock = mock(Jenkins.class);
         String credentialId = "test-cred-id";
         ConjurSecretCredentials mockCredentials = mock(ConjurSecretCredentials.class);
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("private-key");
         when(mockCredentials.getId()).thenReturn(credentialId);
-        when(mockCredentials.getSecret()).thenReturn(Secret.fromString("private-key"));
+        when(mockCredentials.getSecret()).thenReturn(mockSecret);
         try (MockedStatic<Jenkins> staticMockJenkins = mockStatic(Jenkins.class);
              MockedStatic<CredentialsProvider> mockProvider = mockStatic(CredentialsProvider.class)) {
             staticMockJenkins.when(Jenkins::get).thenReturn(jenkinsMock);
@@ -204,7 +206,9 @@ public class ConjurSecretUsernameSSHKeyCredentialsImplTest {
         String credentialId = "test-cred-id";
         ConjurSecretCredentials mockCredentials = mock(ConjurSecretCredentials.class);
         when(mockCredentials.getId()).thenReturn(credentialId);
-        when(mockCredentials.getSecret()).thenReturn(Secret.fromString("private-key"));
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn("private-key");
+        when(mockCredentials.getSecret()).thenReturn(mockSecret);
         try (MockedStatic<Jenkins> staticMockJenkins = mockStatic(Jenkins.class);
              MockedStatic<CredentialsProvider> mockProvider = mockStatic(CredentialsProvider.class)) {
             staticMockJenkins.when(Jenkins::get).thenReturn(jenkinsMock);

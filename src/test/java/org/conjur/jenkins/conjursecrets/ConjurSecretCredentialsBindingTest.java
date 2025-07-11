@@ -9,6 +9,7 @@ import hudson.Launcher;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import org.conjur.jenkins.credentials.ConjurCredentialProvider;
 import org.jenkinsci.plugins.credentialsbinding.BindingDescriptor;
@@ -73,7 +74,9 @@ public class ConjurSecretCredentialsBindingTest<I> {
         mockLauncher = mock(Launcher.class);
         mockListener = mock(TaskListener.class);
         mockCredentials = mock(ConjurSecretCredentials.class);
-        when(mockCredentials.getSecret()).thenReturn(hudson.util.Secret.fromString(SECRET_VALUE));
+        Secret mockSecret = mock(Secret.class);
+        when(mockSecret.getPlainText()).thenReturn(SECRET_VALUE);
+        when(mockCredentials.getSecret()).thenReturn(mockSecret);
         doNothing().when(mockCredentials).setContext(any());
     }
 
@@ -181,7 +184,7 @@ public class ConjurSecretCredentialsBindingTest<I> {
 
     @SuppressWarnings("deprecation")
     @Test
-    public void testBind() throws Exception, InterruptedException {
+    public void testBind() throws Exception {
         mockCredentialLookup();
         MultiBinding.MultiEnvironment env = secretBinding.bind(mockRun, mockFilePath, mockLauncher, mockListener);
         Map<String, String> secretMap = env.getValues();

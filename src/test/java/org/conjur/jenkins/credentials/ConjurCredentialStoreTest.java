@@ -479,14 +479,16 @@ public class ConjurCredentialStoreTest {
         assertEquals(mockStore, action.getStore());
     }
 
+    ConjurCredentialStore.ConjurCredentialStoreAction createTestAction(
+            ConjurCredentialStore store, ModelObject context) {
+        return new ConjurCredentialStore.ConjurCredentialStoreAction(store, context);
+    }
 
     private ConjurCredentialStore.ConjurCredentialStoreAction createActionWithVisibility(
-            ConjurCredentialStore store, ModelObject context, boolean visible) throws Exception {
-        Constructor<ConjurCredentialStore.ConjurCredentialStoreAction> constructor =
-                ConjurCredentialStore.ConjurCredentialStoreAction.class.getDeclaredConstructor(
-                        ConjurCredentialStore.class, ModelObject.class);
-        constructor.setAccessible(true);
-        ConjurCredentialStore.ConjurCredentialStoreAction action = constructor.newInstance(store, context);
+            ConjurCredentialStore store, ModelObject context, boolean visible) {
+
+        ConjurCredentialStore.ConjurCredentialStoreAction action =
+                createTestAction(store, context);
 
         ConjurCredentialStore.ConjurCredentialStoreAction spyAction = spy(action);
         doReturn(visible).when(spyAction).isVisible();
