@@ -204,7 +204,7 @@ public class ConjurAPIUtils {
 		return Jenkins.get().getItemByFullName(jobPath);
 	}
 
-	private static String extractJobPathFromUrl(String urlPath) {
+	protected static String extractJobPathFromUrl(String urlPath) {
 		if (urlPath.contains("/job/")) {
 			return Arrays.stream(urlPath.split("/job/"))
 					.filter(segment -> !segment.isEmpty())

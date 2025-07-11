@@ -122,17 +122,61 @@ pipeline {
       }
     }
 
-    stage('Test') {
-      steps {
-        script {
-          infrapool.agentSh 'scripts/test.sh'
-        }
-      }
-    }
     stage('Package') {
       steps {
         script {
           infrapool.agentSh 'scripts/build.sh'
+        }
+      }
+      post {
+        always {
+          script {
+            infrapool.agentArchiveArtifacts artifacts: 'target/conjur-credentials.hpi'
+          }
+        }
+      }
+    }
+    stage('Test') {
+      steps {
+        script {
+          infrapool.agentSh 'scripts/test.sh'
+          // Stash Surefire reports
+          infrapool.agentStash name: 'surefire-reports', includes: 'target/surefire-reports/*.xml'
+
+
+        }
+      }
+    }
+    stage('Publish Test Results') {
+      steps {
+        script {
+          unstash 'surefire-reports'
+          // Publish JUnit reports
+          junit 'target/surefire-reports/*.xml'
+        }
+      }
+    }
+
+    stage('Report Test Coverage to Codacy') {
+      steps {
+        script {
+          // Assuming the jacoco.xml file is in the 'target/site/jacoco/' directory
+          infrapool.agentStash name: 'jacoco', includes: 'target/site/jacoco/jacoco.xml'
+          unstash 'jacoco'
+          codacy action: 'reportCoverage', filePath: "target/site/jacoco/jacoco.xml"
+          // Stash and unstash HTML coverage report
+          infrapool.agentStash name: 'target-site-jacoco', includes: 'target/site/jacoco/*.xml'
+          unstash 'target-site-jacoco'
+          // Publish HTML Coverage Report
+          publishHTML(target: [
+                  allowMissing: false,
+                  alwaysLinkToLastBuild: false,
+                  keepAll: true,
+                  reportDir: 'target/site/jacoco/',
+                  reportFiles: 'index.html',
+                  reportName: 'Coverage Report',
+                  reportTitles: 'Conjur Credentials Plugin Code Coverage Jacoco report'
+          ])
         }
       }
     }

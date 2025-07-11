@@ -276,7 +276,7 @@ public class ConjurCredentialStore extends CredentialsStore {
         private final ConjurCredentialStore store;
 		private final ModelObject context;
 
-        private ConjurCredentialStoreAction(ConjurCredentialStore store, ModelObject context) {
+        protected ConjurCredentialStoreAction(ConjurCredentialStore store, ModelObject context) {
             this.store = store;
 			this.context = context;
             addIcons();
