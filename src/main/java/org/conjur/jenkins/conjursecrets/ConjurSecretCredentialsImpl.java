@@ -18,7 +18,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
-import java.util.logging.Logger;
 
 /** Class to retrieve the secrets */
 public class ConjurSecretCredentialsImpl extends BaseStandardCredentials implements ConjurSecretCredentials {
