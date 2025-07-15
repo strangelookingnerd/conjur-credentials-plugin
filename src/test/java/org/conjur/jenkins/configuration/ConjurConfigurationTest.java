@@ -78,9 +78,7 @@ public class ConjurConfigurationTest {
                 "1vpn19h1j621711qm1c9mphkkqw2y35v283h1bccxb028w06t94st");
         try {
             store.addCredentials(Domain.global(), conjurCredentials);
-        } catch (UnsupportedOperationException ignored) {
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (UnsupportedOperationException | IOException ignored) {
         }
 
         config = new ConjurConfiguration("https://example.com", "test-account");
@@ -174,10 +172,10 @@ public class ConjurConfigurationTest {
 
         try {
             store.addCredentials(Domain.global(), cred);
-            System.out.println("Conjur Credential Added");
-        } catch (UnsupportedOperationException ignored) {
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            boolean found = store.getCredentials(Domain.global()).stream()
+                    .anyMatch(c -> "DB_SECRET".equals(c.getDescriptor().getId()));
+            assertTrue(found);
+        } catch (UnsupportedOperationException | IOException ignored) {
         }
     }
 

@@ -14,7 +14,6 @@ import hudson.model.ModelObject;
 import hudson.security.Permission;
 import jenkins.model.Jenkins;
 import org.conjur.jenkins.api.ConjurAPI;
-import org.conjur.jenkins.conjursecrets.ConjurSecretCredentials;
 import org.jenkins.ui.icon.Icon;
 import org.jenkins.ui.icon.IconSet;
 import org.jenkins.ui.icon.IconType;
@@ -35,6 +34,7 @@ import java.util.logging.Logger;
 public class ConjurCredentialStore extends CredentialsStore {
 	private static final String DISPLAY_NAME = "Conjur Credential Storage";
 	private static final Logger LOGGER = Logger.getLogger(ConjurCredentialStore.class.getName());
+
 	private static ConcurrentHashMap<String, ConjurCredentialStore> allStores = new ConcurrentHashMap<String, ConjurCredentialStore>();
 	private final ConjurCredentialProvider provider;
 	private final ModelObject context;
@@ -271,6 +271,7 @@ public class ConjurCredentialStore extends CredentialsStore {
     @ExportedBean
     public static class ConjurCredentialStoreAction extends CredentialsStoreAction {
 
+		private static final String DISPLAY_NAME = "Conjur Credential Store";
         private static final String ICON_CLASS = "icon-conjur-credentials-store";
 
         private final ConjurCredentialStore store;
@@ -317,7 +318,6 @@ public class ConjurCredentialStore extends CredentialsStore {
                     : null;
         }
 
-		private static final String DISPLAY_NAME = "Conjur Credential Store";
         @Override
         public String getDisplayName() {
             return DISPLAY_NAME;

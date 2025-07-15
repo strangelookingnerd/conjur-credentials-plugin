@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 @NameWith(value = ConjurSecretCredentials.NameProvider.class, priority = 1)
 public interface ConjurSecretCredentials extends StandardCredentials {
 
+	Logger LOGGER = Logger.getLogger(ConjurSecretCredentials.class.getName());
+
 	/**
 	 * Inner class to retrieve the displayName for the job
 	 */
@@ -24,8 +26,6 @@ public interface ConjurSecretCredentials extends StandardCredentials {
 			return c.getDisplayName() + c.getNameTag() + " (" + c.getDescription() + ")";
 		}
 	}
-
-	public static final Logger LOGGER = Logger.getLogger(ConjurSecretCredentials.class.getName());
 
 	String getDisplayName();
 

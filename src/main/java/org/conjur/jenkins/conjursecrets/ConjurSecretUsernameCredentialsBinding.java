@@ -22,6 +22,11 @@ import java.util.logging.Logger;
  */
 public class ConjurSecretUsernameCredentialsBinding extends MultiBinding<ConjurSecretUsernameCredentials> {
 
+	private static final Logger LOGGER = Logger.getLogger(ConjurSecretUsernameCredentialsBinding.class.getName());
+
+	private String usernameVariable;
+	private String passwordVariable;
+
 	@Symbol("conjurSecretUsername")
 	@Extension
 	public static class DescriptorImpl extends BindingDescriptor<ConjurSecretUsernameCredentials> {
@@ -42,11 +47,6 @@ public class ConjurSecretUsernameCredentialsBinding extends MultiBinding<ConjurS
 			return ConjurSecretUsernameCredentials.class;
 		}
 	}
-
-	private static final Logger LOGGER = Logger.getLogger(ConjurSecretUsernameCredentialsBinding.class.getName());
-
-	private String usernameVariable;
-	private String passwordVariable;
 
 	@DataBoundConstructor
 	public ConjurSecretUsernameCredentialsBinding(String credentialsId)

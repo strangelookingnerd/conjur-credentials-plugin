@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 public class ConjurCredentialProvider extends CredentialsProvider {
 
 	private static final Logger LOGGER = Logger.getLogger(ConjurCredentialProvider.class.getName());
+	private static final ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>> allCredentialSuppliers = new ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>>();
 
 	public ConjurCredentialProvider() {
 	}
@@ -51,7 +52,7 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 	public <C extends Credentials> List<C> getCredentials(@NonNull Class<C> type, @NonNull ItemGroup itemGroup,
 														  @NonNull Authentication authentication, @NonNull List<DomainRequirement> domainRequirements) {
 
-		return getCredentialsFromSupplier(type, itemGroup, authentication, domainRequirements);
+		return getCredentialsFromSupplier(type, itemGroup, authentication);
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 	@NonNull
 	public <C extends Credentials> List<C> getCredentials(@NonNull Class<C> type, @NonNull Item item,
 			@NonNull Authentication authentication, @NonNull List<DomainRequirement> domainRequirements) {
-		return getCredentialsFromSupplier(type, item, authentication, domainRequirements);
+		return getCredentialsFromSupplier(type, item, authentication);
 
 	}
 
@@ -74,7 +75,7 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 	@NonNull
 	public <C extends Credentials> List<C> getCredentials(@NonNull Class<C> type, ItemGroup itemGroup,
 			Authentication authentication) {
-		return getCredentialsFromSupplier(type, itemGroup, authentication, Collections.emptyList());
+		return getCredentialsFromSupplier(type, itemGroup, authentication);
 	}
 
 	/**
@@ -112,12 +113,11 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 	 * @param type type of credential class which will be returned
 	 * @param context current context
 	 * @param authentication
-	 * @param domainRequirements
 	 * @return
 	 * @param <C> Credentials in list
 	 */
 	private <C extends Credentials> List<C> getCredentialsFromSupplier(@NonNull Class<C> type, ModelObject context,
-			Authentication authentication, @NonNull List<DomainRequirement> domainRequirements) {
+			Authentication authentication) {
 		List<C> creds = new ArrayList<C>();
 
 		LOGGER.log(Level.FINEST, String.format("getCredentialsFromSupplier type: %s context: %s", type.toString(), context.getDisplayName() ) );
@@ -176,8 +176,6 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 
 		return creds;
 	}
-
-	private static final ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>> allCredentialSuppliers = new ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>>();
 
 	/**
 	 * Method to return the Conjur Credential Store

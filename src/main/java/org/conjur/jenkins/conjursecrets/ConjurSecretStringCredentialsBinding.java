@@ -22,7 +22,7 @@ import hudson.model.TaskListener;
  */
 public class ConjurSecretStringCredentialsBinding extends Binding<ConjurSecretStringCredentials> {
     private static final Logger LOGGER = Logger.getLogger(ConjurSecretStringCredentialsBinding.class.getName());
-
+    private static final String DISPLAY_NAME = "Secret String Credential";
 
     @DataBoundConstructor
     public ConjurSecretStringCredentialsBinding(String variable, String credentialsId) {
@@ -54,7 +54,6 @@ public class ConjurSecretStringCredentialsBinding extends Binding<ConjurSecretSt
             return ConjurSecretStringCredentials.class;
         }
 
-        private static final String DISPLAY_NAME = "Secret String Credential";
         @Override public String getDisplayName() {
             return DISPLAY_NAME;
         }

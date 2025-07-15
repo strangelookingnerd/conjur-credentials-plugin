@@ -24,20 +24,19 @@ import java.util.logging.Logger;
  *
  */
 public class ConjurSecretStringCredentialsImpl extends BaseStandardCredentials implements ConjurSecretStringCredentials {
-    @Override
-    public String getDisplayName() {
-        return "ConjurSecretString:" + this.variableId;
-    }
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(ConjurSecretStringCredentialsImpl.class.getName());
+
     private String variableId; // to be used as Username
     private transient ModelObject context;
     boolean storedInConjurStorage = false;
     private transient ModelObject inheritedObjectContext;
+
+    @Override
+    public String getDisplayName() {
+        return "ConjurSecretString:" + this.variableId;
+    }
 
     /**
      * to set the varaiblePath,scope,id,description

@@ -25,6 +25,9 @@ import java.util.logging.Level;
 public class ConjurSecretUsernameCredentialsImpl extends BaseStandardCredentials
 		implements ConjurSecretUsernameCredentials {
 
+	private static final long serialVersionUID = 1L;
+	private static final String name = "Conjur Secret Username Credential";
+
 	private String username;
 	private String variableId;
 	private transient ModelObject context;
@@ -48,11 +51,6 @@ public class ConjurSecretUsernameCredentialsImpl extends BaseStandardCredentials
 		this.username = username;
 		this.variableId = variableId;
 	}
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 
 	/**
 	 * @return usernmae
@@ -90,7 +88,6 @@ public class ConjurSecretUsernameCredentialsImpl extends BaseStandardCredentials
 		this.variableId = variableId;
 	}
 
-	private static final String name = "Conjur Secret Username Credential";
 	/**
 	 * 
 	 * @return DisplayName for Descriptor
