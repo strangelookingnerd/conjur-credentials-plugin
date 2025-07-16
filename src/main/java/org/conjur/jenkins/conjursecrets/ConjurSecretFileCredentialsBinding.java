@@ -89,7 +89,7 @@ public class ConjurSecretFileCredentialsBinding extends MultiBinding<ConjurSecre
         }
     }
 
-    private static class CleanupAction extends InvisibleAction {
+    protected static class CleanupAction extends InvisibleAction {
         private final String path;
 
         CleanupAction(FilePath tempFile) {

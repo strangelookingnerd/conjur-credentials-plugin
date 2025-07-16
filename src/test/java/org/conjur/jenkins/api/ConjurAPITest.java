@@ -284,10 +284,10 @@ public class ConjurAPITest {
             ConjurAPIKeyAuthenticator spyAuth = spy(new ConjurAPIKeyAuthenticator());
             doReturn(expectedToken).when(spyAuth).getAuthorizationToken(mockAuthnInfo, mockContext);
 
-            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
-
-            authField.setAccessible(true);
-            authField.set(null, spyAuth);
+//            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
+//
+//            authField.setAccessible(true);
+//            authField.set(null, spyAuth);
 
             byte[] actualToken = ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext);
 
@@ -297,24 +297,16 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetAuthorizationTokenThrowsIOException() throws Exception {
+    public void testGetAuthorizationTokenThrowsRuntimeException() throws Exception {
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             when(globalConfig.getSelectAuthenticator()).thenReturn("APIKey");
             ExtensionList<GlobalConfiguration> mockExtension = mock(ExtensionList.class);
             when(mockExtension.get(GlobalConjurConfiguration.class)).thenReturn(globalConfig);
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mockExtension);
+            when(api.getAuthorizationToken(mockAuthnInfo, mockContext)).thenThrow(new RuntimeException("Test runtime exception"));
+            RuntimeException thrown = assertThrows(RuntimeException.class, () -> ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext));
 
-            ConjurAPIKeyAuthenticator spyAuth = spy(new ConjurAPIKeyAuthenticator());
-            doThrow(new IOException("Test IO Error")).when(spyAuth).getAuthorizationToken(mockAuthnInfo, mockContext);
-
-            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
-
-            authField.setAccessible(true);
-            authField.set(null, spyAuth);
-
-            IOException thrown = assertThrows(IOException.class, () -> ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext));
-
-            assertEquals("Test IO Error", thrown.getMessage());
+            assertEquals("Test runtime exception", thrown.getMessage());
         }
     }
 

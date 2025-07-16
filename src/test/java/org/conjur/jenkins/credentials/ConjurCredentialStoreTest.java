@@ -11,7 +11,6 @@ import hudson.security.ACL;
 import jenkins.model.Jenkins;
 import org.conjur.jenkins.api.ConjurAPI;
 import org.conjur.jenkins.conjursecrets.ConjurSecretCredentialsImpl;
-import org.conjur.jenkins.credentials.ConjurCredentialStore.ConjurCredentialStoreAction;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Handler;
@@ -468,12 +466,10 @@ public class ConjurCredentialStoreTest {
 
 
     @Test
-    public void testConjurCredentialStoreAction() throws Exception {
+    public void testConjurCredentialStoreAction() {
         ConjurCredentialStore mockStore = mock(ConjurCredentialStore.class);
         ModelObject mockContext = mock(ModelObject.class);
-        Constructor<ConjurCredentialStoreAction> constructor = ConjurCredentialStoreAction.class.getDeclaredConstructor(ConjurCredentialStore.class, ModelObject.class);
-        constructor.setAccessible(true);
-        ConjurCredentialStoreAction action = constructor.newInstance(mockStore, mockContext);
+        ConjurCredentialStore.ConjurCredentialStoreAction action = new ConjurCredentialStore.ConjurCredentialStoreAction(mockStore, mockContext);
 
         assertEquals("Conjur Credential Store", action.getDisplayName());
         assertEquals(mockStore, action.getStore());
