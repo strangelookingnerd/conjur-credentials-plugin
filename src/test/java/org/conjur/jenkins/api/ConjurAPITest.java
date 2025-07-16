@@ -497,15 +497,10 @@ public class ConjurAPITest {
         // Mock folder hierarchy (no parent)
         when(folderMock.getParent()).thenReturn(null);
 
-        when(globalConjurConfiguration.getAccount()).thenReturn("");
-        when(globalConjurConfiguration.getApplianceURL()).thenReturn("");
-        when(globalConjurConfiguration.getCredentialID()).thenReturn("");
-
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
-            when(globalConjurConfigMock.getSelectAuthenticator()).thenReturn("APIKey");
 
             ConjurConfiguration result = ConjurAPI.getConjurConfig(folderMock);
 
