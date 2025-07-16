@@ -73,14 +73,14 @@ public class ConjurAPI {
 
     private static void defaultToEnvironment(ConjurAuthnInfo conjurAuthn) {
         Map<String, String> env = System.getenv();
-        if (conjurAuthn.applianceUrl == null && env.containsKey("CONJUR_APPLIANCE_URL"))
-            conjurAuthn.applianceUrl = env.get("CONJUR_APPLIANCE_URL");
-        if (conjurAuthn.account == null && env.containsKey("CONJUR_ACCOUNT"))
-            conjurAuthn.account = env.get("CONJUR_ACCOUNT");
-        if (conjurAuthn.login == null && env.containsKey("CONJUR_AUTHN_LOGIN"))
-            conjurAuthn.login = env.get("CONJUR_AUTHN_LOGIN");
-        if (conjurAuthn.apiKey == null && env.containsKey("CONJUR_AUTHN_API_KEY"))
-            conjurAuthn.apiKey = env.get("CONJUR_AUTHN_API_KEY").getBytes(StandardCharsets.US_ASCII);
+        if (conjurAuthn.getApplianceUrl() == null && env.containsKey("CONJUR_APPLIANCE_URL"))
+            conjurAuthn.setApplianceUrl(env.get("CONJUR_APPLIANCE_URL"));
+        if (conjurAuthn.getAccount() == null && env.containsKey("CONJUR_ACCOUNT"))
+            conjurAuthn.setAccount(env.get("CONJUR_ACCOUNT"));
+        if (conjurAuthn.getLogin() == null && env.containsKey("CONJUR_AUTHN_LOGIN"))
+            conjurAuthn.setLogin(env.get("CONJUR_AUTHN_LOGIN"));
+        if (conjurAuthn.getApiKey() == null && env.containsKey("CONJUR_AUTHN_API_KEY"))
+            conjurAuthn.setApiKey(env.get("CONJUR_AUTHN_API_KEY").getBytes(StandardCharsets.US_ASCII));
     }
 
     /**
@@ -160,7 +160,7 @@ public class ConjurAPI {
             setAuthenticator();
         }
         ConjurAuthnInfo conjurAuthn = new ConjurAuthnInfo();
-        conjurAuthn.conjurConfiguration = configuration;
+        conjurAuthn.setConjurConfiguration(configuration);
 
         // Default to Environment variables if not values present
         defaultToEnvironment(conjurAuthn);
@@ -169,14 +169,14 @@ public class ConjurAPI {
         if (configuration != null) {
             String applianceUrl = configuration.getApplianceURL();
             if (applianceUrl != null && !applianceUrl.isEmpty()) {
-                conjurAuthn.applianceUrl = applianceUrl;
+                conjurAuthn.setApplianceUrl(applianceUrl);
             }
             String account = configuration.getAccount();
             if (account != null && !account.isEmpty()) {
-                conjurAuthn.account = account;
+                conjurAuthn.setAccount(account);
             }
             // Default authentication will be authn
-            conjurAuthn.authnPath = "authn";
+            conjurAuthn.setAuthnPath("authn");
         }
 
         authenticator.fillAuthnInfo(conjurAuthn, context);
@@ -400,7 +400,7 @@ public class ConjurAPI {
             LOGGER.log(Level.SEVERE, String.format("Authentication failed. Cannot get token from Conjur for context: %s", context.getDisplayName()));
             return null;
         } catch (SSLPeerUnverifiedException pve) {
-            LOGGER.log(Level.SEVERE, String.format("Cannot get authentication token from Conjur. SSL Peer Unverified url: %s", conjurAuthn.applianceUrl));
+            LOGGER.log(Level.SEVERE, String.format("Cannot get authentication token from Conjur. SSL Peer Unverified url: %s", conjurAuthn.getApplianceUrl()));
             return null;
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, String.format("Cannot get authentication token from Conjur. Exception: %s", e));
@@ -409,7 +409,7 @@ public class ConjurAPI {
 
         // First we are getting list of secrets
 
-        String requestUrl = String.format("%s/resources/%s?kind=variable&limit=1000", conjurAuthn.applianceUrl, conjurAuthn.account);
+        String requestUrl = String.format("%s/resources/%s?kind=variable&limit=1000", conjurAuthn.getApplianceUrl(), conjurAuthn.getAccount());
 
         Request request = new Request.Builder().url(
                         requestUrl)

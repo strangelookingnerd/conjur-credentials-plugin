@@ -39,39 +39,40 @@ public class ConjurJWTAuthenticator extends AbstractAuthenticator {
     @Override
     @SuppressWarnings("deprecation")
     public byte[] getAuthorizationToken(ConjurAuthnInfo conjurAuthn, ModelObject context) throws IOException {
+        byte[] resultingToken = null;
+
         LOGGER.log(Level.FINEST, String.format("Authenticating with Conjur (JWT) conjurAuthn.authnPath %s conjurAuthn.account %s conjurAuthn.applianceUrl %s",
-                conjurAuthn.authnPath, conjurAuthn.account, conjurAuthn.applianceUrl));
+                conjurAuthn.getAuthnPath(), conjurAuthn.getAccount(), conjurAuthn.getApplianceUrl()));
 
-        if (conjurAuthn.apiKey == null || conjurAuthn.authnPath == null) {
+        Request request = null;
+        if (conjurAuthn.getApiKey() != null && conjurAuthn.getAuthnPath() != null) {
+            String authnPath = !conjurAuthn.getAuthnPath().contains("/") ? "authn-jwt/" + conjurAuthn.getAuthnPath() : conjurAuthn.getAuthnPath();
+
+            request = new Request.Builder().url(String.format("%s/%s/%s/authenticate",
+                    conjurAuthn.getApplianceUrl(), authnPath, conjurAuthn.getAccount()))
+                    .post(RequestBody.create(MediaType.parse("text/plain"), conjurAuthn.getApiKey())).build();
+        }
+
+        if (request != null) {
+            OkHttpClient client = ConjurAPIUtils.getHttpClient(conjurAuthn.getConjurConfiguration());
+            Response response = client.newCall(request).execute();
+            ResponseBody body = response.body();
+            if (body != null) {
+                byte[] respMessage = body.string().getBytes(StandardCharsets.UTF_8);
+                resultingToken = Base64.getEncoder().withoutPadding().encodeToString(respMessage).getBytes(StandardCharsets.US_ASCII);
+                LOGGER.log(Level.FINEST, () -> "Conjur Authenticate response " + response.code() + " - " + response.message());
+            }
+
+            if (response.code() != 200) {
+                if (response.code() == 401) {
+                    throw new AuthenticationConjurException(response.code());
+                } else {
+                    throw new IOException("[" + response.code() + "] - " + response.message());
+                }
+            }
+        } else {
             LOGGER.log(Level.SEVERE, "Cannot create http call. JWTAuthentication failed.");
-            return null;
         }
-
-        String authnPath = !conjurAuthn.authnPath.contains("/") ? "authn-jwt/" + conjurAuthn.authnPath : conjurAuthn.authnPath;
-        Request request = new Request.Builder()
-                .url(String.format("%s/%s/%s/authenticate", conjurAuthn.applianceUrl, authnPath, conjurAuthn.account))
-                .post(RequestBody.create(MediaType.parse("text/plain"), conjurAuthn.apiKey))
-                .build();
-
-        OkHttpClient client = ConjurAPIUtils.getHttpClient(conjurAuthn.conjurConfiguration);
-        Response response = client.newCall(request).execute();
-        ResponseBody body = response.body();
-
-        if (body == null) {
-            return null;
-        }
-
-        byte[] respMessage = body.string().getBytes(StandardCharsets.UTF_8);
-        byte[] resultingToken = Base64.getEncoder().withoutPadding()
-                .encodeToString(respMessage).getBytes(StandardCharsets.US_ASCII);
-        LOGGER.log(Level.FINEST, () -> "Conjur Authenticate response " + response.code() + " - " + response.message());
-
-        if (response.code() == 401) {
-            throw new AuthenticationConjurException(response.code());
-        } else if (response.code() != 200) {
-            throw new IOException("[" + response.code() + "] - " + response.message());
-        }
-
         return resultingToken;
     }
 
@@ -87,9 +88,9 @@ public class ConjurJWTAuthenticator extends AbstractAuthenticator {
 
         String jwtToken = JwtToken.getToken(context, globalConfig);
 
-        conjurAuthn.login = null;
+        conjurAuthn.setLogin(null);
         if (globalConfig != null) {
-            conjurAuthn.authnPath = globalConfig.getAuthWebServiceId();
+            conjurAuthn.setAuthnPath(globalConfig.getAuthWebServiceId());
         }
         byte[] jwtNameBytes = "jwt=".getBytes(StandardCharsets.US_ASCII);
         byte[] jwtTokenBytes = jwtToken.getBytes(StandardCharsets.US_ASCII);
@@ -97,6 +98,6 @@ public class ConjurJWTAuthenticator extends AbstractAuthenticator {
 
         System.arraycopy(jwtNameBytes, 0, jwt, 0, jwtNameBytes.length);
         System.arraycopy(jwtTokenBytes, 0, jwt, jwtNameBytes.length, jwtTokenBytes.length);
-        conjurAuthn.apiKey = jwt;
+        conjurAuthn.setApiKey(jwt);
     }
 }

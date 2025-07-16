@@ -43,12 +43,12 @@ public class ConjurAPIKeyAuthenticatorTest {
         authenticator = new ConjurAPIKeyAuthenticator();
         mockContext = mock(ModelObject.class);
         authnInfo = new ConjurAuthnInfo();
-        authnInfo.applianceUrl = "https://conjur.example.com";
-        authnInfo.authnPath = "authn";
-        authnInfo.account = "myaccount";
-        authnInfo.login = "mylogin";
-        authnInfo.apiKey = "secret-api-key".getBytes(StandardCharsets.US_ASCII);
-        authnInfo.conjurConfiguration = new ConjurConfiguration();
+        authnInfo.setApplianceUrl("https://conjur.example.com");
+        authnInfo.setAuthnPath("authn");
+        authnInfo.setAccount("myaccount");
+        authnInfo.setLogin("mylogin");
+        authnInfo.setApiKey("secret-api-key".getBytes(StandardCharsets.US_ASCII));
+        authnInfo.setConjurConfiguration(new ConjurConfiguration());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class ConjurAPIKeyAuthenticatorTest {
 
     @Test
     public void testGetAuthorizationTokenNullRequestReturnsNull() throws Exception {
-        authnInfo.apiKey = null;
+        authnInfo.setApiKey(null);
         byte[] token = authenticator.getAuthorizationToken(authnInfo, mockContext);
         assertNull(token);
     }
@@ -179,16 +179,16 @@ public class ConjurAPIKeyAuthenticatorTest {
 
             authenticator.fillAuthnInfo(authnInfo, mockContext);
 
-            assertEquals("mylogin", authnInfo.login);
-            assertNotNull(authnInfo.apiKey);
+            assertEquals("mylogin", authnInfo.getLogin());
+            assertNotNull(authnInfo.getApiKey());
         }
     }
 
     @Test
     public void testFillAuthnInfoNoCredentialFound() {
         // Reset authnInfo fields
-        authnInfo.login = null;
-        authnInfo.apiKey = null;
+        authnInfo.setLogin(null);
+        authnInfo.setApiKey(null);
 
         try (MockedStatic<ConjurAPI> conjurApiMock = mockStatic(ConjurAPI.class);
              MockedStatic<CredentialsProvider> credentialsProviderMock = mockStatic(CredentialsProvider.class);
@@ -216,8 +216,8 @@ public class ConjurAPIKeyAuthenticatorTest {
             credentialsMatchersMock.when(() -> CredentialsMatchers.firstOrNull(anyList(), any())).thenReturn(null);
             authenticator.fillAuthnInfo(authnInfo, mockContext);
 
-            assertNull(authnInfo.login);
-            assertNull(authnInfo.apiKey);
+            assertNull(authnInfo.getLogin());
+            assertNull(authnInfo.getApiKey());
         }
 
 

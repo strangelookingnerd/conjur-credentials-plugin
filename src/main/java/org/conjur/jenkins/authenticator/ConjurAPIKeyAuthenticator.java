@@ -45,46 +45,42 @@ public class ConjurAPIKeyAuthenticator extends AbstractAuthenticator {
     @Override
     @SuppressWarnings("deprecation")
     public byte[] getAuthorizationToken(ConjurAuthnInfo conjurAuthn, ModelObject context) throws IOException {
+        byte[] resultingToken = null;
+
         LOGGER.log(Level.FINEST, String.format("getAuthorizationToken: authnPath %s account %s conjurAuthn.applianceUrl %s",
-                conjurAuthn.authnPath, conjurAuthn.account, conjurAuthn.applianceUrl));
+                conjurAuthn.getAuthnPath(), conjurAuthn.getAccount(), conjurAuthn.getApplianceUrl()));
 
-        if (conjurAuthn.apiKey == null || conjurAuthn.login == null) {
+        Request request = null;
+        if (conjurAuthn.getApiKey() != null && conjurAuthn.getLogin() != null) {
+            String urlstring = String.format("%s/%s/%s/%s/authenticate", conjurAuthn.getApplianceUrl(), conjurAuthn.getAuthnPath(),
+                    conjurAuthn.getAccount(), URLEncoder.encode(conjurAuthn.getLogin(), "utf-8"));
+            request = new Request.Builder()
+                    .url(urlstring)
+                    .post(RequestBody.create(MediaType.parse("text/plain"), conjurAuthn.getApiKey())).build();
+        }
+
+        if (request != null) {
+            OkHttpClient client = ConjurAPIUtils.getHttpClient(conjurAuthn.getConjurConfiguration());
+            Response response = client.newCall(request).execute();
+            ResponseBody body = response.body();
+            if (body != null) {
+                byte[] respMessage = body.string().getBytes(StandardCharsets.UTF_8);
+                resultingToken = Base64.getEncoder().withoutPadding()
+                        .encodeToString(respMessage).getBytes(StandardCharsets.US_ASCII);
+                LOGGER.log(Level.FINEST,
+                        () -> String.format("Conjur Authenticate response %d - %s", response.code(), response.message()));
+            }
+
+            if (response.code() != 200) {
+                if (response.code() == 401) {
+                    throw new AuthenticationConjurException(response.code());
+                } else {
+                    throw new IOException("[" + response.code() + "] - " + response.message());
+                }
+            }
+        } else {
             LOGGER.log(Level.SEVERE, "Cannot create http call. Authentication failed.");
-            return null;
         }
-
-        String urlstring = String.format("%s/%s/%s/%s/authenticate",
-                conjurAuthn.applianceUrl,
-                conjurAuthn.authnPath,
-                conjurAuthn.account,
-                URLEncoder.encode(conjurAuthn.login, "utf-8"));
-
-        Request request = new Request.Builder()
-                .url(urlstring)
-                .post(RequestBody.create(MediaType.parse("text/plain"), conjurAuthn.apiKey))
-                .build();
-
-        OkHttpClient client = ConjurAPIUtils.getHttpClient(conjurAuthn.conjurConfiguration);
-        Response response = client.newCall(request).execute();
-        ResponseBody body = response.body();
-
-        if (body == null) {
-            return null;
-        }
-
-        byte[] respMessage = body.string().getBytes(StandardCharsets.UTF_8);
-        byte[] resultingToken = Base64.getEncoder().withoutPadding()
-                .encodeToString(respMessage).getBytes(StandardCharsets.US_ASCII);
-
-        LOGGER.log(Level.FINEST, () -> String.format("Conjur Authenticate response %d - %s",
-                response.code(), response.message()));
-
-        if (response.code() == 401) {
-            throw new AuthenticationConjurException(response.code());
-        } else if (response.code() != 200) {
-            throw new IOException("[" + response.code() + "] - " + response.message());
-        }
-
         return resultingToken;
     }
 
@@ -105,8 +101,8 @@ public class ConjurAPIKeyAuthenticator extends AbstractAuthenticator {
             UsernamePasswordCredentials credential = CredentialsMatchers.firstOrNull(globalCreds,
                     CredentialsMatchers.withId(configuration.getCredentialID()));
             if (credential != null) {
-                conjurAuthn.login = credential.getUsername();
-                conjurAuthn.apiKey = credential.getPassword().getPlainText().getBytes(StandardCharsets.US_ASCII);
+                conjurAuthn.setLogin(credential.getUsername());
+                conjurAuthn.setApiKey(credential.getPassword().getPlainText().getBytes(StandardCharsets.US_ASCII));
             }
         }
         LOGGER.log(Level.SEVERE, String.format("UsernamePasswordCredentials found %d for ID %s",globalCreds.size(), configuration.getCredentialID( ) ) );

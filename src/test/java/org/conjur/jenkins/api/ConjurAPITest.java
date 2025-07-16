@@ -164,11 +164,11 @@ public class ConjurAPITest {
         when(mockGlobalConjurConfig.getApplianceURL()).thenReturn("globalApplianceURL");
 
         // Example of setting ConjurAuthnInfo with these configurations
-        conjurAuthn.account = (mockConjurConjurConfig.getAccount() != null ? mockConjurConjurConfig.getAccount() : mockGlobalConjurConfig.getAccount());
-        conjurAuthn.applianceUrl = (mockConjurConjurConfig.getApplianceURL() != null ? mockConjurConjurConfig.getApplianceURL() : mockGlobalConjurConfig.getApplianceURL());
+        conjurAuthn.setAccount(mockConjurConjurConfig.getAccount() != null ? mockConjurConjurConfig.getAccount() : mockGlobalConjurConfig.getAccount());
+        conjurAuthn.setApplianceUrl(mockConjurConjurConfig.getApplianceURL() != null ? mockConjurConjurConfig.getApplianceURL() : mockGlobalConjurConfig.getApplianceURL());
         // Verify that ConjurAuthnInfo uses global values when local values are null
-        assertEquals("globalAccount", conjurAuthn.account);
-        assertEquals("globalApplianceURL", conjurAuthn.applianceUrl);
+        assertEquals("globalAccount", conjurAuthn.getAccount());
+        assertEquals("globalApplianceURL", conjurAuthn.getApplianceUrl());
     }
 
 
@@ -196,9 +196,9 @@ public class ConjurAPITest {
         env.put("CONJUR_AUTHN_LOGIN", "testLogin");
         env.put("CONJUR_AUTHN_API_KEY", "testApiKey");
 
-        conjurAuthn.applianceUrl = env.get(0);
+        conjurAuthn.setApplianceUrl(env.get(0));
 
-        conjurAuthn.account = env.get(1);
+        conjurAuthn.setAccount(env.get(1));
 
         assertEquals("https://conjur_server:8083", env.get("CONJUR_APPLIANCE_URL"));
 
@@ -212,14 +212,14 @@ public class ConjurAPITest {
         envNull.put("CONJUR_AUTHN_LOGIN", null);
         envNull.put("CONJUR_AUTHN_API_KEY", null);
 
-        conjurAuthn.applianceUrl = envNull.get(0);
+        conjurAuthn.setApplianceUrl(envNull.get(0));
 
-        conjurAuthn.account = envNull.get(1);
+        conjurAuthn.setAccount(envNull.get(1));
 
-        assertNull(conjurAuthn.applianceUrl);
-        assertNull(conjurAuthn.account);
-        assertNull(conjurAuthn.login);
-        assertNull(conjurAuthn.apiKey);
+        assertNull(conjurAuthn.getApplianceUrl());
+        assertNull(conjurAuthn.getAccount());
+        assertNull(conjurAuthn.getLogin());
+        assertNull(conjurAuthn.getApiKey());
 
         assertNull(envNull.get("CONJUR_APPLIANCE_URL"));
         assertNull(envNull.get("CONJUR_ACCOUNT"));
@@ -284,10 +284,10 @@ public class ConjurAPITest {
             ConjurAPIKeyAuthenticator spyAuth = spy(new ConjurAPIKeyAuthenticator());
             doReturn(expectedToken).when(spyAuth).getAuthorizationToken(mockAuthnInfo, mockContext);
 
-//            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
-//
-//            authField.setAccessible(true);
-//            authField.set(null, spyAuth);
+            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
+
+            authField.setAccessible(true);
+            authField.set(null, spyAuth);
 
             byte[] actualToken = ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext);
 
