@@ -18,16 +18,11 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import javax.annotation.CheckForNull;
-import java.util.logging.Logger;
 
 /** Class to retrieve the secrets */
 public class ConjurSecretCredentialsImpl extends BaseStandardCredentials implements ConjurSecretCredentials {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private static final Logger LOGGER = Logger.getLogger(ConjurSecretCredentialsImpl.class.getName());
 	private String variableId; // to be used as Username
 	private transient ModelObject context;
 	boolean storedInConjurStorage = false;

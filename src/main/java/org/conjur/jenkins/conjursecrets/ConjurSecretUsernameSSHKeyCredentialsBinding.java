@@ -27,6 +27,11 @@ import hudson.model.TaskListener;
  */
 public class ConjurSecretUsernameSSHKeyCredentialsBinding extends MultiBinding<ConjurSecretUsernameSSHKeyCredentials> {
 
+	private static final Logger LOGGER = Logger.getLogger(ConjurSecretUsernameSSHKeyCredentialsBinding.class.getName());
+
+	private String usernameVariable;
+	private String secretVariable;
+
 	@Symbol("conjurSecretUsernameSSHKey")
 	@Extension
 	public static class DescriptorImpl extends BindingDescriptor<ConjurSecretUsernameSSHKeyCredentials> {
@@ -47,10 +52,6 @@ public class ConjurSecretUsernameSSHKeyCredentialsBinding extends MultiBinding<C
 			return ConjurSecretUsernameSSHKeyCredentials.class;
 		}
 	}
-
-	private static final Logger LOGGER = Logger.getLogger(ConjurSecretUsernameSSHKeyCredentialsBinding.class.getName());
-	private String usernameVariable;
-	private String secretVariable;
 
 	@DataBoundConstructor
 	public ConjurSecretUsernameSSHKeyCredentialsBinding(String credentialsId) {

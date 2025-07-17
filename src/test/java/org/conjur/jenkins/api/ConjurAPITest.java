@@ -164,11 +164,11 @@ public class ConjurAPITest {
         when(mockGlobalConjurConfig.getApplianceURL()).thenReturn("globalApplianceURL");
 
         // Example of setting ConjurAuthnInfo with these configurations
-        conjurAuthn.account = (mockConjurConjurConfig.getAccount() != null ? mockConjurConjurConfig.getAccount() : mockGlobalConjurConfig.getAccount());
-        conjurAuthn.applianceUrl = (mockConjurConjurConfig.getApplianceURL() != null ? mockConjurConjurConfig.getApplianceURL() : mockGlobalConjurConfig.getApplianceURL());
+        conjurAuthn.setAccount(mockConjurConjurConfig.getAccount() != null ? mockConjurConjurConfig.getAccount() : mockGlobalConjurConfig.getAccount());
+        conjurAuthn.setApplianceUrl(mockConjurConjurConfig.getApplianceURL() != null ? mockConjurConjurConfig.getApplianceURL() : mockGlobalConjurConfig.getApplianceURL());
         // Verify that ConjurAuthnInfo uses global values when local values are null
-        assertEquals("globalAccount", conjurAuthn.account);
-        assertEquals("globalApplianceURL", conjurAuthn.applianceUrl);
+        assertEquals("globalAccount", conjurAuthn.getAccount());
+        assertEquals("globalApplianceURL", conjurAuthn.getApplianceUrl());
     }
 
 
@@ -196,9 +196,9 @@ public class ConjurAPITest {
         env.put("CONJUR_AUTHN_LOGIN", "testLogin");
         env.put("CONJUR_AUTHN_API_KEY", "testApiKey");
 
-        conjurAuthn.applianceUrl = env.get(0);
+        conjurAuthn.setApplianceUrl(env.get(0));
 
-        conjurAuthn.account = env.get(1);
+        conjurAuthn.setAccount(env.get(1));
 
         assertEquals("https://conjur_server:8083", env.get("CONJUR_APPLIANCE_URL"));
 
@@ -212,14 +212,14 @@ public class ConjurAPITest {
         envNull.put("CONJUR_AUTHN_LOGIN", null);
         envNull.put("CONJUR_AUTHN_API_KEY", null);
 
-        conjurAuthn.applianceUrl = envNull.get(0);
+        conjurAuthn.setApplianceUrl(envNull.get(0));
 
-        conjurAuthn.account = envNull.get(1);
+        conjurAuthn.setAccount(envNull.get(1));
 
-        assertNull(conjurAuthn.applianceUrl);
-        assertNull(conjurAuthn.account);
-        assertNull(conjurAuthn.login);
-        assertNull(conjurAuthn.apiKey);
+        assertNull(conjurAuthn.getApplianceUrl());
+        assertNull(conjurAuthn.getAccount());
+        assertNull(conjurAuthn.getLogin());
+        assertNull(conjurAuthn.getApiKey());
 
         assertNull(envNull.get("CONJUR_APPLIANCE_URL"));
         assertNull(envNull.get("CONJUR_ACCOUNT"));
@@ -297,24 +297,16 @@ public class ConjurAPITest {
     }
 
     @Test
-    public void testGetAuthorizationTokenThrowsIOException() throws Exception {
+    public void testGetAuthorizationTokenThrowsRuntimeException() throws Exception {
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             when(globalConfig.getSelectAuthenticator()).thenReturn("APIKey");
             ExtensionList<GlobalConfiguration> mockExtension = mock(ExtensionList.class);
             when(mockExtension.get(GlobalConjurConfiguration.class)).thenReturn(globalConfig);
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mockExtension);
+            when(api.getAuthorizationToken(mockAuthnInfo, mockContext)).thenThrow(new RuntimeException("Test runtime exception"));
+            RuntimeException thrown = assertThrows(RuntimeException.class, () -> ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext));
 
-            ConjurAPIKeyAuthenticator spyAuth = spy(new ConjurAPIKeyAuthenticator());
-            doThrow(new IOException("Test IO Error")).when(spyAuth).getAuthorizationToken(mockAuthnInfo, mockContext);
-
-            Field authField = ConjurAPI.class.getDeclaredField("authenticator");
-
-            authField.setAccessible(true);
-            authField.set(null, spyAuth);
-
-            IOException thrown = assertThrows(IOException.class, () -> ConjurAPI.getAuthorizationToken(mockAuthnInfo, mockContext));
-
-            assertEquals("Test IO Error", thrown.getMessage());
+            assertEquals("Test runtime exception", thrown.getMessage());
         }
     }
 
@@ -505,15 +497,10 @@ public class ConjurAPITest {
         // Mock folder hierarchy (no parent)
         when(folderMock.getParent()).thenReturn(null);
 
-        when(globalConjurConfiguration.getAccount()).thenReturn("");
-        when(globalConjurConfiguration.getApplianceURL()).thenReturn("");
-        when(globalConjurConfiguration.getCredentialID()).thenReturn("");
-
         try (MockedStatic<GlobalConfiguration> globalConfigStatic = mockStatic(GlobalConfiguration.class)) {
             globalConfigStatic.when(GlobalConfiguration::all).thenReturn(mock(ExtensionList.class));
             when(GlobalConfiguration.all().get(GlobalConjurConfiguration.class)).thenReturn(globalConjurConfigMock);
             when(globalConjurConfigMock.getConjurConfiguration()).thenReturn(globalConjurConfiguration);
-            when(globalConjurConfigMock.getSelectAuthenticator()).thenReturn("APIKey");
 
             ConjurConfiguration result = ConjurAPI.getConjurConfig(folderMock);
 

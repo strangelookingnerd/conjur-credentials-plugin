@@ -35,6 +35,7 @@ public class ConjurSecretUsernameSSHKeyCredentialsImpl extends BaseSSHUser
 		implements ConjurSecretUsernameSSHKeyCredentials {
 
 	private static final long serialVersionUID = 1L;
+	private static final String DISPLAY_NAME = "Conjur Secret Username SSHKey Credential";
 
 	private String credentialID;
 	private Secret passphrase;
@@ -95,7 +96,6 @@ public class ConjurSecretUsernameSSHKeyCredentialsImpl extends BaseSSHUser
 		this.passphrase = passphrase;
 	}
 
-	private static final String DISPLAY_NAME = "Conjur Secret Username SSHKey Credential";
 	/**
 	 * Returns the credential type description
 	 * @return DescriptorDisplayName

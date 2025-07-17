@@ -61,10 +61,10 @@ class ConjurJWTAuthenticatorTest {
     @BeforeEach
     void setUp() {
         conjurAuthn = new ConjurAuthnInfo();
-        conjurAuthn.applianceUrl = "https://conjur.example.com";
-        conjurAuthn.account = "myaccount";
-        conjurAuthn.authnPath = "test";
-        conjurAuthn.apiKey = "dummy-jwt-token".getBytes(StandardCharsets.US_ASCII);
+        conjurAuthn.setApplianceUrl("https://conjur.example.com");
+        conjurAuthn.setAccount("myaccount");
+        conjurAuthn.setAuthnPath("test");
+        conjurAuthn.setApiKey("dummy-jwt-token".getBytes(StandardCharsets.US_ASCII));
     }
 
     @Test
@@ -146,7 +146,7 @@ class ConjurJWTAuthenticatorTest {
 
     @Test
     void testGetAuthorizationTokenNullRequest() throws IOException {
-        conjurAuthn.apiKey = null;
+        conjurAuthn.setApiKey(null);
 
         byte[] result = authenticator.getAuthorizationToken(conjurAuthn, mockContext);
 
@@ -172,9 +172,9 @@ class ConjurJWTAuthenticatorTest {
 
             authenticator.fillAuthnInfo(conjurAuthn, mockContext);
 
-            assertEquals("test-web-service", conjurAuthn.authnPath);
-            assertNotNull(conjurAuthn.apiKey);
-            String apiKeyString = new String(conjurAuthn.apiKey, StandardCharsets.US_ASCII);
+            assertEquals("test-web-service", conjurAuthn.getAuthnPath());
+            assertNotNull(conjurAuthn.getApiKey());
+            String apiKeyString = new String(conjurAuthn.getApiKey(), StandardCharsets.US_ASCII);
             assertTrue(apiKeyString.startsWith("jwt="));
         }
     }

@@ -33,6 +33,11 @@ import jenkins.model.Jenkins;
  */
 public class ConjurSecretCredentialsBinding extends MultiBinding<ConjurSecretCredentials> {
 
+	private static final Logger LOGGER = Logger.getLogger(ConjurSecretCredentialsBinding.class.getName());
+
+	private String variable;
+	private String credentialsId;
+
 	@Symbol("conjurSecretCredential")
 	@Extension
 	public static class DescriptorImpl extends BindingDescriptor<ConjurSecretCredentials> {
@@ -53,10 +58,6 @@ public class ConjurSecretCredentialsBinding extends MultiBinding<ConjurSecretCre
 			return ConjurSecretCredentials.class;
 		}
 	}
-
-	private static final Logger LOGGER = Logger.getLogger(ConjurSecretCredentialsBinding.class.getName());
-	private String variable;
-	private String credentialsId;
 
 	@DataBoundConstructor
 	public ConjurSecretCredentialsBinding(String credentialsId) {

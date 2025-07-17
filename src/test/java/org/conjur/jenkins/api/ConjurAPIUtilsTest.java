@@ -205,20 +205,11 @@ public class ConjurAPIUtilsTest {
     }
 
     @Test
-    public void testExtractJobPathFromUrlThrowsException() throws Exception {
+    public void testExtractJobPathFromUrlThrowsException() {
         String urlPath = "folder1/myJob/";
-        Method method = ConjurAPIUtils.class.getDeclaredMethod("extractJobPathFromUrl", String.class);
-        method.setAccessible(true);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> ConjurAPIUtils.extractJobPathFromUrl(urlPath));
 
-        //InvocationTargetException is wrapped around IllegalArgumentException
-
-        Exception exception = assertThrows(InvocationTargetException.class, () -> {
-            method.invoke(null, urlPath);
-        });
-
-        Throwable cause = exception.getCause();
-        assertNotNull(cause);
-        assertEquals("Invalid job path: folder1/myJob/", cause.getMessage());
+        assertEquals("Invalid job path: folder1/myJob/", exception.getMessage());
     }
 
     @Test

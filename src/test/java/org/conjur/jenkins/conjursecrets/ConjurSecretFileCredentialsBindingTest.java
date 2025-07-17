@@ -10,9 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -95,17 +92,12 @@ public class ConjurSecretFileCredentialsBindingTest {
     }
 
     @Test
-    public void testCleanupAction() throws ClassNotFoundException, NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    public void testCleanupAction() {
         FilePath mockPath = mock(FilePath.class);
         when(mockPath.getRemote()).thenReturn("/test/job");
-        Class<?> cleanupActionClass = Class.forName("org.conjur.jenkins.conjursecrets.ConjurSecretFileCredentialsBinding$CleanupAction");
-        Constructor<?> constructor = cleanupActionClass.getDeclaredConstructor(FilePath.class);
-        constructor.setAccessible(true);
-        Object cleanupAction = constructor.newInstance(mockPath);
-        Method getPathMethod = cleanupActionClass.getDeclaredMethod("getPath");
-        getPathMethod.setAccessible(true);
-        String path = (String) getPathMethod.invoke(cleanupAction);
+        ConjurSecretFileCredentialsBinding.CleanupAction cleanupAction = new ConjurSecretFileCredentialsBinding.CleanupAction(mockPath);
 
+        String path = cleanupAction.getPath();
         assertEquals("/test/job", path);
     }
 

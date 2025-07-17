@@ -5,6 +5,7 @@ import jenkins.model.Jenkins;
 import org.acegisecurity.Authentication;
 import org.apache.commons.lang.StringUtils;
 import org.conjur.jenkins.configuration.GlobalConjurConfiguration;
+import org.conjur.jenkins.exceptions.JwtException;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwx.HeaderParameterNames;
@@ -55,7 +56,7 @@ public class JwtToken {
 
             return jsonWebSignature.getCompactSerialization();
         } catch (JoseException e) {
-            throw new RuntimeException("Failed to sign JWT token: " + e.getMessage(), e);
+            throw new JwtException("Failed to sign JWT token: " + e.getMessage(), e);
         }
 
     }
@@ -186,7 +187,8 @@ public class JwtToken {
             // if checkbox is enabled its "sub", "identityformatfields"
             // if checkbox is disabled its 'identity' as old code hold good
             boolean isEnabled = globalConfig.getEnableIdentityFormatFieldsFromToken();
-            String identityFieldName, separator = "";
+            String identityFieldName = "";
+            String separator = "";
             if (!isEnabled) {
                 LOGGER.log(Level.FINE, "Disable JWT Simplified");
                 // Add identity field
@@ -225,7 +227,7 @@ public class JwtToken {
                 jwtToken.claim.put("sub", StringUtils.join(identityValues, separator));
             }
 
-        } else if (contextObject instanceof hudson.model.Hudson) {
+        } else if (contextObject instanceof Hudson) {
             jwtToken.claim.put("jenkins_pronoun", "Global");    // this have to be in policy
             jwtToken.claim.put("jenkins_task_noun", "Build");
             jwtToken.claim.put("jenkins_parent_name", "/");

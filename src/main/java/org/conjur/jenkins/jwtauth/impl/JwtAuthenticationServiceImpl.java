@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 @Extension
 public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 	private static final Logger LOGGER = Logger.getLogger(JwtAuthenticationServiceImpl.class.getName());
+	private static final String DISPLAY_NAME = "Conjur JWT endpoint";
 
 	/**
 	 * get the public key based on the Global Configuration
@@ -46,7 +47,6 @@ public class JwtAuthenticationServiceImpl extends JwtAuthenticationService {
 		return null;
 	}
 
-	private static final String DISPLAY_NAME = "Conjur JWT endpoint";
 	/**
 	 * Get the displayname
 	 * @return displayname
