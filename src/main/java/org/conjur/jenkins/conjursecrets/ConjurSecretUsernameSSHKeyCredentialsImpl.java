@@ -185,13 +185,16 @@ public class ConjurSecretUsernameSSHKeyCredentialsImpl extends BaseSSHUser
 	@SuppressWarnings("deprecation")
 	public String getPrivateKey( ) {
 		// First, try to fetch credentials from the global Jenkins context
+		ModelObject searchContext = this.context != null ? this.context : Jenkins.get();
 		ConjurSecretCredentials credential = CredentialsMatchers.firstOrNull(
-				CredentialsProvider.lookupCredentials(ConjurSecretCredentials.class, Jenkins.get(), ACL.SYSTEM,
+				CredentialsProvider.lookupCredentials(
+						ConjurSecretCredentials.class,
+                        (ItemGroup) searchContext,
+						ACL.SYSTEM,
 						Collections.<DomainRequirement>emptyList()),
 				CredentialsMatchers.withId(credentialID));
 
-		if( credential != null )
-		{
+		if (credential != null) {
 			return credential.getSecret().getPlainText();
 		}
 
