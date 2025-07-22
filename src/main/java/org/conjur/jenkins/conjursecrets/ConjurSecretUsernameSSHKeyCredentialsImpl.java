@@ -5,7 +5,6 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.Extension;
 import hudson.model.Item;
@@ -191,7 +190,7 @@ public class ConjurSecretUsernameSSHKeyCredentialsImpl extends BaseSSHUser
 						ConjurSecretCredentials.class,
                         (ItemGroup) searchContext,
 						ACL.SYSTEM,
-						Collections.<DomainRequirement>emptyList()),
+						Collections.emptyList()),
 				CredentialsMatchers.withId(credentialID));
 
 		if (credential != null) {
