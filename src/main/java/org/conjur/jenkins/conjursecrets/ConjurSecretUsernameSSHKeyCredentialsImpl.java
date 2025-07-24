@@ -5,7 +5,6 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.CredentialsScope;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
-import com.cloudbees.plugins.credentials.domains.DomainRequirement;
 import com.cloudbees.plugins.credentials.domains.URIRequirementBuilder;
 import hudson.Extension;
 import hudson.model.Item;
@@ -185,13 +184,16 @@ public class ConjurSecretUsernameSSHKeyCredentialsImpl extends BaseSSHUser
 	@SuppressWarnings("deprecation")
 	public String getPrivateKey( ) {
 		// First, try to fetch credentials from the global Jenkins context
+		ModelObject searchContext = this.context != null ? this.context : Jenkins.get();
 		ConjurSecretCredentials credential = CredentialsMatchers.firstOrNull(
-				CredentialsProvider.lookupCredentials(ConjurSecretCredentials.class, Jenkins.get(), ACL.SYSTEM,
-						Collections.<DomainRequirement>emptyList()),
+				CredentialsProvider.lookupCredentials(
+						ConjurSecretCredentials.class,
+                        (ItemGroup) searchContext,
+						ACL.SYSTEM,
+						Collections.emptyList()),
 				CredentialsMatchers.withId(credentialID));
 
-		if( credential != null )
-		{
+		if (credential != null) {
 			return credential.getSecret().getPlainText();
 		}
 

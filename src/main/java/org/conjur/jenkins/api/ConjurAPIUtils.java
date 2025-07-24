@@ -179,9 +179,11 @@ public class ConjurAPIUtils {
 				return FormValidation
 						.ok("Successfully retrieved secret string");
 			} catch (Exception ex) {
-				LOGGER.log(Level.FINEST, "FAILED to retrieve secret!");
+				LOGGER.log(Level.FINEST, String.format("FAILED to retrieve secret! Exception: %s", e));
 			}
 			return FormValidation.error("FAILED to retrieve secret: \n" + e + "\nPlease check Conjur configuration or add credentials from credentials page");
+		} catch (Exception e) {
+			LOGGER.log(Level.FINEST, String.format("FAILED to retrieve secret! Exception: %s", e));
 		}
 
 		if (secretValue == null || secretValue.isEmpty()) {

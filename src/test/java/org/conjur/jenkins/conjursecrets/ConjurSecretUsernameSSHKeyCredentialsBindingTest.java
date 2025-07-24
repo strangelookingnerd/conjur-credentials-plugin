@@ -1,19 +1,25 @@
 package org.conjur.jenkins.conjursecrets;
 
+import com.cloudbees.plugins.credentials.CredentialsScope;
+import com.cloudbees.plugins.credentials.SystemCredentialsProvider;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.util.Secret;
 import hudson.util.StreamTaskListener;
 import org.jenkinsci.plugins.credentialsbinding.BindingDescriptor;
 import org.jenkinsci.plugins.credentialsbinding.MultiBinding.MultiEnvironment;
 import org.jenkinsci.plugins.credentialsbinding.impl.CredentialNotFoundException;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.nio.charset.Charset;
@@ -24,7 +30,10 @@ import java.util.Set;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 
+@ExtendWith(MockitoExtension.class)
 public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
 
     @Rule
@@ -100,6 +109,31 @@ public class ConjurSecretUsernameSSHKeyCredentialsBindingTest {
         ConjurSecretUsernameSSHKeyCredentialsBinding bind = new ConjurSecretUsernameSSHKeyCredentialsBinding(
                 "Dev-Team-1");
         assertNotNull(bind.type());
+    }
+
+    @Test
+    public void testCredentialsAreMaskedInLogs() throws Exception {
+        ConjurSecretUsernameSSHKeyCredentials cred = new ConjurSecretUsernameSSHKeyCredentialsImpl(
+                CredentialsScope.GLOBAL, "usernamesshkey", "testUser", "usernamesshkeym", Secret.fromString("test"), "desc");
+        SystemCredentialsProvider.getInstance().getCredentials().add(cred);
+        SystemCredentialsProvider.getInstance().save();
+
+        ConjurSecretCredentials spy = spy(cred);
+        doReturn(Secret.fromString("test")).when(spy).getSecret();
+
+        WorkflowJob job = j.createProject(WorkflowJob.class, "test-job");
+        job.setDefinition(new CpsFlowDefinition(
+                "node {\n" +
+                        "        withCredentials([conjurSecretUsernameSSHKey(credentialsId: 'usernamesshkey', usernameVariable:'SSH_USER', secretVariable:'SSH_KEY')]) {\n" +
+                        "             println(SSH_USER) \n" +
+                        "    }\n" +
+                        "}", true)
+        );
+
+        WorkflowRun run = job.scheduleBuild2(0).get();
+        String log = JenkinsRule.getLog(run);
+
+        assertFalse("User credential should be masked", log.contains("testUser"));
     }
 
 }

@@ -35,8 +35,6 @@ public class ConjurCredentialProvider extends CredentialsProvider {
 	private static final Logger LOGGER = Logger.getLogger(ConjurCredentialProvider.class.getName());
 	private static final ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>> allCredentialSuppliers = new ConcurrentHashMap<String, Supplier<Collection<StandardCredentials>>>();
 
-	public ConjurCredentialProvider() {
-	}
 
 	/**
 	 * Returns the Credentials as List based on the type,itemGroup and

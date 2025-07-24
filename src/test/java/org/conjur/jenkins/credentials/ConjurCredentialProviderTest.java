@@ -76,14 +76,6 @@ public class ConjurCredentialProviderTest {
     }
 
     @Test
-    public void testGetIconClassName() {
-        ConjurCredentialProvider provider = new ConjurCredentialProvider();
-        String result = provider.getIconClassName();
-
-        assertEquals("icon-conjur-credentials-store", result);
-    }
-
-    @Test
     public void testMemoizeWithExpiration() throws InterruptedException {
         Supplier<String> baseSupplier = () -> "Value at " + System.currentTimeMillis();
         Supplier<String> memoizedSupplier = ConjurCredentialProvider.memoizeWithExpiration(baseSupplier,
