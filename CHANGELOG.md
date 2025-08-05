@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)an
 
 Please use documentation outlined in the GitHub Readme for this version.  Official CyberArk documentation pages will be updated to reflect these changes once available
 
-## [3.0.6] - 2025-08-01
+## [3.0.6] - 2025-08-05
 
 ### Fixed
 No longer change secret ID when loading Conjur variable (CNJR-10588)
@@ -165,7 +165,8 @@ We strongly recommend utilizing the default values recommended for fields that w
 ### Added
 - Added Support for SSH Private Key
 
-[3.0.5]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.4...HEAD
+[3.0.6]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.5...HEAD
+[3.0.5]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.4...v3.0.5
 [3.0.4]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.3...v3.0.4
 [3.0.3]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.1...v3.0.3
 [3.0.1]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.0...v3.0.1
