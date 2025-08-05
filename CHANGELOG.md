@@ -165,7 +165,7 @@ We strongly recommend utilizing the default values recommended for fields that w
 ### Added
 - Added Support for SSH Private Key
 
-[3.0.6]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.5...HEAD
+[3.0.6]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.5...v3.0.6
 [3.0.5]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.4...v3.0.5
 [3.0.4]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.3...v3.0.4
 [3.0.3]: https://github.com/jenkinsci/conjur-credentials-plugin/compare/v3.0.1...v3.0.3
